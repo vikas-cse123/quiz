@@ -110,3 +110,22 @@ if (isMix) {
 //     },
 //   },
 // );
+
+
+/////
+//vikas-change:put this fn into helper folder
+// const transformValueInLowerCaseInObj = (inp, ...notTransform) => {
+//   const obj = {};
+//   for (const key in inp) {
+//     if (notTransform.includes(key)) {
+//       obj[key] = inp[key];
+//     } else if (typeof inp[key] === "string") {
+//       obj[key] = inp[key].toLowerCase();
+//     } else {
+//       obj[key] = inp[key];
+//     }
+//   }
+//   console.log(obj);
+//   console.log(inp);
+//   return obj;
+// };

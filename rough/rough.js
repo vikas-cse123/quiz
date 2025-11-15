@@ -38,257 +38,333 @@ export const getQuizMetaData = (data) => {
   );
 };
 
-const data = [
-  {
-    type: "multiple",
-    difficulty: "hard",
-    category: "General Knowledge",
-    question: "If you planted the seeds of Quercus robur, what would grow?",
-    options: ["Vegetables", "Trees", "Grains", "Flowers"],
-    id: "6915e7d4cfb258f4b267419e",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "Which of the following presidents is not on Mount Rushmore?",
-    options: [
-      "John F. Kennedy",
-      "Theodore Roosevelt",
-      "Thomas Jefferson",
-      "Abraham Lincoln",
-    ],
-    id: "6915e7d4cfb258f4b2674162",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "What does a funambulist walk on?",
-    options: ["Broken Glass", "Balls", "The Moon", "A Tight Rope"],
-    id: "6915e7d4cfb258f4b2674153",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question: "Scotch whisky and Drambuie make up which cocktail?",
-    options: ["Sex on the Beach", "Rusty Nail", "Screwdriver", "Manhattan"],
-    id: "6915e7d4cfb258f4b267418f",
-  },
-  {
-    type: "multiple",
-    difficulty: "hard",
-    category: "General Knowledge",
-    question: "What is the romanized Chinese word for &quot;airplane&quot;?",
-    options: ["Feiji", "Zongxian", "Qiche", "Huojian"],
-    id: "6915e7d4cfb258f4b26741a4",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question: "What does the &quot;G&quot; mean in &quot;G-Man&quot;?",
-    options: ["Government", "Geronimo", "Ghost", "Going"],
-    id: "6915e7d4cfb258f4b2674171",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "Which of these colours is NOT featured in the logo for Google?",
-    options: ["Pink", "Green", "Blue", "Yellow"],
-    id: "6915e7d4cfb258f4b2674140",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question:
-      "What was the name of the WWF professional wrestling tag team made up of the wrestlers Ax and Smash?",
-    options: [
-      "The Bushwhackers",
-      "The Dream Team",
-      "Demolition",
-      "The British Bulldogs",
-    ],
-    id: "6915e7d4cfb258f4b2674142",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question:
-      "What name represents the letter &quot;M&quot; in the NATO phonetic alphabet?",
-    options: ["Max", "Matthew", "Mike", "Mark"],
-    id: "6915e7d4cfb258f4b2674187",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question: "Where did the pineapple plant originate?",
-    options: ["Hawaii", "South America", "Asia", "Europe"],
-    id: "6915e7d4cfb258f4b267419a",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "What geometric shape is generally used for stop signs?",
-    options: ["Octagon", "Circle", "Hexagon", "Triangle"],
-    id: "6915e7d4cfb258f4b2674139",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question:
-      "Terry Gilliam was an animator that worked with which British comedy group?",
-    options: [
-      "The Penny Dreadfuls",
-      "The League of Gentlemen&lrm;",
-      "Monty Python",
-      "The Goodies&lrm;",
-    ],
-    id: "6915e7d4cfb258f4b2674156",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "What is the famous Papa John&#039;s last name?",
-    options: ["Chowder", "ANDERSON", "Williams", "Schnatter"],
-    id: "6915e7d4cfb258f4b267415a",
-  },
-  {
-    type: "multiple",
-    difficulty: "hard",
-    category: "General Knowledge",
-    question:
-      "According to the 2014-2015 Australian Bureau of Statistics, what percentage of Australians were born overseas?",
-    options: ["20%", "28%", "7%", "13%"],
-    id: "6915e7d4cfb258f4b26741cb",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question:
-      "Which iconic Disneyland attraction was closed in 2017 to be remodeled as a &quot;Guardians of the Galaxy&quot; themed ride?",
-    options: [
-      "Peter Pan&#039;s Flight",
-      "Pirates of the Caribbean",
-      "Twilight Zone Tower of Terror",
-      "The Haunted Mansion",
-    ],
-    id: "6915e7d4cfb258f4b267416c",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question:
-      "Which of the three astronauts of the Apollo 11 spaceflight did NOT walk on the moon?",
-    options: [
-      "Buzz Aldrin",
-      "Michael Collins",
-      "None of them",
-      "Neil Armstrong",
-    ],
-    id: "6915e7d4cfb258f4b2674160",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question: "When was Nintendo founded?",
-    options: [
-      "December 27th, 1894",
-      "September 23rd, 1889",
-      "March 4th, 1887",
-      "October 19th, 1891",
-    ],
-    id: "6915e7d4cfb258f4b2674189",
-  },
-  {
-    type: "multiple",
-    difficulty: "hard",
-    category: "General Knowledge",
-    question:
-      "Which musician has collaborated with American producer Porter Robinson and released the 2016 song &quot;Shelter&quot;?",
-    options: ["deadmau5", "Mat Zo", "Madeon", "Zedd"],
-    id: "6915e7d4cfb258f4b26741a7",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "What is the name of the Jewish New Year?",
-    options: ["New Year", "Elul", "Succoss", "Rosh Hashanah"],
-    id: "6915e7d4cfb258f4b2674143",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "How many letters are in the English alphabet?",
-    options: ["30", "26", "5", "17"],
-    id: "6915e7d4cfb258f4b267415f",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question: "What is Tasmania?",
-    options: [
-      "An Australian State",
-      "A flavor of Ben and Jerry&#039;s ice-cream",
-      "The Name of a Warner Brothers Cartoon Character",
-      "A Psychological Disorder",
-    ],
-    id: "6915e7d4cfb258f4b2674152",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question:
-      "What type of animal was Harambe, who was shot after a child fell into it&#039;s enclosure at the Cincinnati Zoo?",
-    options: ["Tiger", "Crocodile", "Gorilla", "Panda"],
-    id: "6915e7d4cfb258f4b2674169",
-  },
-  {
-    type: "multiple",
-    difficulty: "medium",
-    category: "General Knowledge",
-    question: "What year was the first Apple iPod introduced?",
-    options: ["1999", "2000", "1998", "2001"],
-    id: "6915e7d4cfb258f4b2674173",
-  },
-  {
-    type: "multiple",
-    difficulty: "easy",
-    category: "General Knowledge",
-    question:
-      "What country has had prime ministers named Eden, Major, Peel, Law, Brown and Heath?",
-    options: ["Australia", "Canada", "United Kingdom", "New Zealand"],
-    id: "6915e7d4cfb258f4b2674144",
-  },
-  {
-    type: "multiple",
-    difficulty: "hard",
-    category: "General Knowledge",
-    question: "The word &quot;astasia&quot; means which of the following?",
-    options: [
-      "The inability to stand up",
-      "The inability to make decisions",
-      "A feverish desire to rip one&#039;s clothes off",
-      "The inability to concentrate on anything",
-    ],
-    id: "6915e7d4cfb258f4b26741b8",
-  },
-];
+const data =  [
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which of the following is an existing family in &quot;The Sims&quot;?",
+            "options": [
+                "The Family",
+                "The Goth Family",
+                "The Simoleon Family",
+                "The Proud Family"
+            ],
+            "id": "6918816e8846791828478587"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which of these cities does NOT have a United States Minting location?",
+            "options": [
+                "West Point, NY",
+                "Philidelphia, PA",
+                "St. Louis, MO",
+                "San Fransisco, CA"
+            ],
+            "id": "6918816e884679182847857e"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "What is the airspeed velocity of an unladen swallow?",
+            "options": [
+                "20 MPH",
+                "200 MPH",
+                "24 MPH",
+                "15 MPH"
+            ],
+            "id": "6918816e8846791828478582"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which of the following is not another name for the eggplant?",
+            "options": [
+                "Potimarron",
+                "Brinjal",
+                "Melongene",
+                "Guinea Squash"
+            ],
+            "id": "6918816e8846791828478577"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which of the following chemicals are found in eggplant seeds?",
+            "options": [
+                "Cyanide",
+                "Mescaline",
+                "Nicotine",
+                "Psilocybin"
+            ],
+            "id": "6918816e8846791828478578"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Going by the International Code of Signals, which single flag is interpreted as &quot;I require assistance (not distress)&quot;?",
+            "options": [
+                "Victor",
+                "Kilo",
+                "Papa",
+                "Delta"
+            ],
+            "id": "6918816e884679182847857c"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which musician has collaborated with American producer Porter Robinson and released the 2016 song &quot;Shelter&quot;?",
+            "options": [
+                "deadmau5",
+                "Zedd",
+                "Mat Zo",
+                "Madeon"
+            ],
+            "id": "6918816e8846791828478562"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "According to the 2014-2015 Australian Bureau of Statistics, what percentage of Australians were born overseas?",
+            "options": [
+                "13%",
+                "7%",
+                "28%",
+                "20%"
+            ],
+            "id": "6918816e8846791828478586"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Sciophobia is the fear of what?",
+            "options": [
+                "Transportation",
+                "Bright lights",
+                "Eating",
+                "Shadows"
+            ],
+            "id": "6918816e884679182847856c"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "What does the Latin phrase &quot;Veni, vidi, vici&quot; translate into English?",
+            "options": [
+                "Life, liberty, and happiness",
+                "I came, I saw, I conquered",
+                "Past, present, and future",
+                "See no evil, hear no evil, speak no evil"
+            ],
+            "id": "6918816e8846791828478570"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "How many calories are in a 355 ml can of Pepsi Cola?",
+            "options": [
+                "150",
+                "200",
+                "100",
+                "155"
+            ],
+            "id": "6918816e8846791828478557"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which church&#039;s interior in Vatican City was designed in 1503 by renaissance architects including Bramante, Michelangelo and Bernini?",
+            "options": [
+                "St. Mark&rsquo;s Basilica",
+                "The Duomo of Florence",
+                "Catania Cathedral",
+                "St. Peter&#039;s Basilica"
+            ],
+            "id": "6918816e8846791828478584"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "What year was Queen Elizabeth II born?",
+            "options": [
+                "1929",
+                "1930",
+                "1923",
+                "1926"
+            ],
+            "id": "6918816e884679182847855e"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Located in Chile, El Teniente is the world&#039;s largest underground mine for what metal?",
+            "options": [
+                "Nickel",
+                "Silver",
+                "Iron",
+                "Copper"
+            ],
+            "id": "6918816e8846791828478579"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Which product did Nokia, the telecommunications company, originally sell?",
+            "options": [
+                "Computers",
+                "Processors",
+                "Phones",
+                "Paper"
+            ],
+            "id": "6918816e8846791828478569"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Named after the mallow flower, mauve is a shade of what?",
+            "options": [
+                "Pink",
+                "Brown",
+                "Purple",
+                "Red"
+            ],
+            "id": "6918816e884679182847855d"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "What type of dog is &#039;Handsome Dan&#039;, the mascot of Yale University?",
+            "options": [
+                "Yorkshire Terrier",
+                "Boxer",
+                "Pug",
+                "Bulldog"
+            ],
+            "id": "6918816e884679182847857a"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Nephelococcygia is the practice of doing what?",
+            "options": [
+                "Swimming in freezing water",
+                "Finding shapes in clouds",
+                "Sleeping with your eyes open",
+                "Breaking glass with your voice"
+            ],
+            "id": "6918816e8846791828478564"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "If someone said &quot;you are olid&quot;, what would they mean?",
+            "options": [
+                "Your appearance is repulsive.",
+                "You are incomprehensible/an idiot.",
+                "You smell extremely unpleasant.",
+                "You are out of shape/weak."
+            ],
+            "id": "6918816e884679182847857f"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "The Swedish word &quot;Grunka&quot; means what in English?",
+            "options": [
+                "People",
+                "Place",
+                "Pineapple",
+                "Thing"
+            ],
+            "id": "6918816e8846791828478580"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "If you planted the seeds of Quercus robur, what would grow?",
+            "options": [
+                "Trees",
+                "Vegetables",
+                "Grains",
+                "Flowers"
+            ],
+            "id": "6918816e8846791828478559"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "The word &quot;aprosexia&quot; means which of the following?",
+            "options": [
+                "The inability to make decisions",
+                "A feverish desire to rip one&#039;s clothes off",
+                "The inability to stand up",
+                "The inability to concentrate on anything"
+            ],
+            "id": "6918816e8846791828478563"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "Electronic music producer Kygo&#039;s popularity skyrocketed after a certain remix. Which song did he remix?",
+            "options": [
+                "Ed Sheeran - I See Fire",
+                "Marvin Gaye - Sexual Healing",
+                "Coldplay - Midnight",
+                "a-ha - Take On Me"
+            ],
+            "id": "6918816e8846791828478585"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "How many notes are there on a standard grand piano?",
+            "options": [
+                "98",
+                "108",
+                "88",
+                "78"
+            ],
+            "id": "6918816e8846791828478560"
+        },
+        {
+            "type": "multiple",
+            "difficulty": "hard",
+            "category": "General Knowledge",
+            "question": "What is the most commonly used noun in the English language?",
+            "options": [
+                "Time",
+                "Water",
+                "Man",
+                "Home"
+            ],
+            "id": "6918816e8846791828478572"
+        }
+    ];
 
 // console.log(getQuizMetaData(quizData));
 console.log(getQuizMetaData(data));

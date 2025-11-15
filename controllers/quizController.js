@@ -1,23 +1,9 @@
 import mongoose from "mongoose";
 import Question from "../model/Question.js";
 import QuizAttempt from "../model/QuizAttempt.js";
+import { CLIENT_RENEG_LIMIT } from "tls";
 
-//vikas-change:put this fn into helper folder
-// const transformValueInLowerCaseInObj = (inp, ...notTransform) => {
-//   const obj = {};
-//   for (const key in inp) {
-//     if (notTransform.includes(key)) {
-//       obj[key] = inp[key];
-//     } else if (typeof inp[key] === "string") {
-//       obj[key] = inp[key].toLowerCase();
-//     } else {
-//       obj[key] = inp[key];
-//     }
-//   }
-//   console.log(obj);
-//   console.log(inp);
-//   return obj;
-// };
+
 
 const eachDiffcultyScore = {
   easy: 1,
@@ -179,6 +165,7 @@ export const createQuiz = async (req, res) => {
 
 export const checkAnswer = async (req, res) => {
   const { questionId, userSelectedOption, quizId } = req.body;
+  console.log("req.user",req.user);
   console.log("questionId", questionId);
   console.log("quizId", quizId);
   console.log(
@@ -214,9 +201,9 @@ export const checkAnswer = async (req, res) => {
         return true;
       }
     });
-    // if(questionRecord.isAttempt){
-    //   return res.status(200).json({message:"ye question attempt ho chuka hai"})
-    // }
+    if(questionRecord.isAttempt){
+      return res.status(200).json({message:"ye question attempt ho chuka hai"})
+    }
     questionRecord.isAttempt = true
     quiz.currentScore = quiz.currentScore+thisQuestionScore
     await quiz.save()
@@ -249,3 +236,18 @@ export const checkAnswer = async (req, res) => {
     });
   }
 };
+
+export const quizResult = async (req,res) => {
+  const {quizId} = req.body
+  if(req.user.currentPlayingQuiz.toString() !== quizId){
+    return res.status(200).json({msg:"diff quiz"})
+
+
+  }
+
+  const quiz = await QuizAttempt.findById(quizId)
+  
+
+
+
+}
