@@ -245,8 +245,15 @@ export const quizResult = async (req,res) => {
 
   }
 
+
   const quiz = await QuizAttempt.findById(quizId)
-  
+  console.log(quiz);
+    const result = {
+    stats:{
+      totalQuestions:quiz.totalQuestions
+    }
+
+  }
 
 
 
