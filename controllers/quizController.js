@@ -1,9 +1,6 @@
-import mongoose from "mongoose";
+import { getQuizResultStats } from "../helpers/getQuizResultStats.js";
 import Question from "../model/Question.js";
 import QuizAttempt from "../model/QuizAttempt.js";
-import { CLIENT_RENEG_LIMIT } from "tls";
-
-
 
 const eachDiffcultyScore = {
   easy: 1,
@@ -12,7 +9,6 @@ const eachDiffcultyScore = {
 };
 
 const getQuizDiffcultyAndTypeStats = (quiz) => {
-  // let stats = { easy: 0, medium: 0, hard: 0 };
   let stats = {
     difficultyCount: {
       easy: 0,
@@ -32,7 +28,7 @@ const getQuizDiffcultyAndTypeStats = (quiz) => {
     } else if (difficulty === "hard") {
       stats.difficultyCount["hard"] = stats.difficultyCount["hard"] + 1;
     }
-    ////////for question type
+    //for question type
     if (type === "multiple") {
       stats.questionTypeCount.multiple = stats.questionTypeCount.multiple + 1;
     } else if (type === "boolean") {
@@ -57,22 +53,13 @@ const getOptions = (correctAnswer, incorrectAnswers) => {
 
   return randomizedOptions;
 };
-
 export const createQuiz = async (req, res) => {
+  //getOptions,getQuizDiffcultyAndTypeStats
   let { category, totalQuestions, difficulty, type, timeForEachQuestionInSec } =
     req.body;
   //vikas-gpt ask if it good way to lowercase or not
   difficulty = difficulty.toLowerCase();
   type = type.toLowerCase();
-  console.log("111111", {
-    category,
-    totalQuestions,
-    difficulty,
-    type,
-    timeForEachQuestionInSec,
-  });
-  console.log("22222", [category, difficulty, type]);
-
   let quiz = (
     await Question.aggregate([
       {
@@ -112,8 +99,6 @@ export const createQuiz = async (req, res) => {
     },
   );
 
-  console.log("444444", quiz.length);
-
   //vikas-gpt:is it good way to take value in variable likr this
   let totalScore;
   let difficultyStats;
@@ -129,32 +114,51 @@ export const createQuiz = async (req, res) => {
       difficultyStats.hard * eachDiffcultyScore.hard;
   } else {
     totalScore = totalQuestions * eachDiffcultyScore[difficulty];
-    difficultyStats = { [difficulty]: totalQuestions };
-    questionTypeCount = getQuizDiffcultyAndTypeStats(quiz).questionTypeCount;
+    // difficultyStats = { [difficulty]: totalQuestions };
+    const stats = getQuizDiffcultyAndTypeStats(quiz);
+    questionTypeCount = stats.questionTypeCount;
+    difficultyStats = stats.difficultyCount;
   }
 
-  console.log("difficultyStats", difficultyStats);
-  console.log("totalScore", totalScore);
-  console.log("totalQuestions", totalQuestions);
-  console.log("questionTypeCount", questionTypeCount);
-
-  const attemptQuiz = await QuizAttempt.create({
-    allQuestions: quiz.map(({ id }) => ({ questionId: id, isAttempt: false })),
+  const quizAttempt = await QuizAttempt.create({
+    allQuestions: quiz.map(({ id }, i) => ({
+      questionId: id,
+      isAttempt: false,
+      questionNumber: i + 1,
+    })),
     totalQuestions,
     multipleQuestionCount: questionTypeCount.multiple,
     booleanQuestionCount: questionTypeCount.boolean,
     currentScore: 0,
     totalScore,
-    easyQuestions: difficultyStats.easy || 0,
-    mediumQuestions: difficultyStats.medium || 0,
-    hardQuestions: difficultyStats.hard || 0,
+    easyQuestions: difficultyStats.easy,
+    mediumQuestions: difficultyStats.medium,
+    hardQuestions: difficultyStats.hard,
     userId: req.user.id,
     timeForEachQuestionInSec,
+    correctAnswerCount: 0,
+    wrongAnswerCount: 0,
   });
 
-  //save attempt quiz id in user data
-  req.user.currentPlayingQuiz = attemptQuiz._id;
-  await req.user.save();
+  //save  quizAttempt  id in user data
+  const user = req.user;
+  if (user.currentPlayingQuizId) {
+    const quiz = await QuizAttempt.findById(user.currentPlayingQuizId);
+    if (!quiz) {
+      // user.currentPlayingQuizId = quizAttempt._id;
+    } else {
+      user.quizHistory.push(user.currentPlayingQuizId);
+
+      // user.currentPlayingQuizId = quizAttempt._id;
+    }
+  }
+  // else {
+
+  //   user.currentPlayingQuizId = quizAttempt._id;
+  // }
+  user.currentPlayingQuizId = quizAttempt._id;
+
+  await user.save();
 
   return res.status(200).json({
     success: true,
@@ -163,69 +167,75 @@ export const createQuiz = async (req, res) => {
   });
 };
 
+export const getQuestion = async (req, res) => {
+  const questionNumber = Number(req.params.questionId);
+  const { quizId } = req.body;
+  const quiz = await QuizAttempt.findById(quizId);
+  console.log(questionNumber);
+  if (questionNumber - 1 >= quiz.totalQuestions) {
+    return res
+      .status(400)
+      .json({ msg: `quiz has only ${quiz.totalQuestions} questions` });
+  }
+
+  const questionRecord = quiz.allQuestions[questionNumber - 1];
+  if (questionRecord.isAttempt) {
+    return res.status(400).json({ msg: "ye pehle hi atempt ho chuka hai" });
+  }
+
+  const question = await Question.findById(questionRecord.questionId);
+  return res.status(200).json(question);
+};
+
 export const checkAnswer = async (req, res) => {
   const { questionId, userSelectedOption, quizId } = req.body;
-  console.log("req.user",req.user);
-  console.log("questionId", questionId);
-  console.log("quizId", quizId);
-  console.log(
-    "req.user.currentPlayingQuiz",
-    req.user.currentPlayingQuiz.toString(),
-  );
-  console.log(
-    "req.user.currentPlayingQuiz === quizId",
-    req.user.currentPlayingQuiz.toString() !== quizId,
-  );
-  if (req.user.currentPlayingQuiz.toString() !== quizId) {
-    return res.status(500).json({ m: "1111 :" });
+
+  if (req.user.currentPlayingQuizId.toString() !== quizId) {
+    return res.status(200).json({ m: "1111 :quiz id mismatched" });
   }
+
   const quiz = await QuizAttempt.findById(quizId);
-  console.log("quiz", quiz);
   if (!quiz) {
-    return res.status(500).json({ m: "333 : quiz not found " });
+    return res.status(500).json({ m: "22 : quiz not found " });
   }
 
   const question = await Question.findById(questionId);
-  console.log({ question });
   if (!question) {
-    return res.status(404).json({ m: "Ssdss:2222" });
+    return res.status(404).json({ m: "question not found :333" });
+  }
+  console.log("quizzzz", quiz);
+
+  quiz.status === "Quiz in progress";
+  const questionRecord = quiz.allQuestions.find(
+    (question) => question.questionId.toString() === questionId,
+  );
+  console.log("questionRecord", questionRecord);
+
+  if (questionRecord.isAttempt) {
+    return res
+      .status(200)
+      .json({ message: "ye question attempt ho chuka hai" });
   }
 
   if (userSelectedOption === question.correctAnswer) {
-    const thisQuestionScore = eachDiffcultyScore[question.difficulty];
-    console.log("thisQuestionScore", thisQuestionScore);
+    questionRecord.isAttempt = true;
+    questionRecord.userChosenOption = userSelectedOption;
+    quiz.correctAnswerCount = quiz.correctAnswerCount + 1;
+    quiz.currentScore =
+      quiz.currentScore + eachDiffcultyScore[question.difficulty];
 
-      const questionRecord = quiz.allQuestions.find((el) => {
+    await quiz.save();
+    console.log("questionRecord", questionRecord);
 
-      if (el.questionId.toString() === questionId) {
-        return true;
-      }
-    });
-    if(questionRecord.isAttempt){
-      return res.status(200).json({message:"ye question attempt ho chuka hai"})
-    }
-    questionRecord.isAttempt = true
-    quiz.currentScore = quiz.currentScore+thisQuestionScore
-    await quiz.save()
-
-    console.log("question------", questionRecord);
     return res
       .status(200)
       .json({ success: true, correct: true, message: "Correct answer." });
   } else {
-    const questionRecord = quiz.allQuestions.find((el) => {
-      // console.log("el.questionId",el.questionId);
-      // console.log("questionId",questionId);
-      // console.log("el.questionId === questionId",el.questionId === questionId);
-      if (el.questionId.toString() === questionId) {
-        return true;
-      }
-    });
-        if(questionRecord.isAttempt){
-      return res.status(200).json({message:"ye question attempt ho chuka hai....."})
-    }
-    questionRecord.isAttempt = true
-    await quiz.save()
+    questionRecord.isAttempt = true;
+    questionRecord.userChosenOption = userSelectedOption;
+    question.wrongAnswerCount = question.wrongAnswerCount + 1;
+
+    await quiz.save();
 
     console.log("question------***", questionRecord);
     return res.status(200).json({
@@ -237,24 +247,54 @@ export const checkAnswer = async (req, res) => {
   }
 };
 
-export const quizResult = async (req,res) => {
-  const {quizId} = req.body
-  if(req.user.currentPlayingQuiz.toString() !== quizId){
-    return res.status(200).json({msg:"diff quiz"})
+export const quizResult = async (req, res) => {
+  const { quizId } = req.body;
+  if (req.user.currentPlayingQuizId.toString() !== quizId) {
+    return res.status(200).json({ msg: "diff quiz" });
+  }
+  //vikas-left . i should also check that quiz must also have user id
+  const quiz = await QuizAttempt.findById(quizId);
 
+  const qna = [];
+  for (let i = 0; i < quiz.allQuestions.length; i++) {
+    const questionRecord = quiz.allQuestions[i];
+    // console.log("questionRecord",questionRecord);
+    const question = await Question.findById(questionRecord.questionId);
 
+    qna.push({
+      question: question.question,
+      userChosenOption: questionRecord.userChosenOption || null,
+      correctAnswer: question.correctAnswer,
+      questionNumber: questionRecord.questionNumber,
+      points:
+        question.correctAnswer === questionRecord.userChosenOption
+          ? eachDiffcultyScore[question.difficulty]
+          : 0,
+    });
   }
 
+  const result = {
+    stats: getQuizResultStats(quiz),
+    qna,
+  };
+  return res.status(200).json(result);
+};
 
-  const quiz = await QuizAttempt.findById(quizId)
-  console.log(quiz);
-    const result = {
-    stats:{
-      totalQuestions:quiz.totalQuestions
-    }
-
+export const getQuizHistory = async (req, res) => {
+  const user = req.user;
+  const quizIds = user.quizHistory;
+  const data = [];
+  for (const quizId of quizIds) {
+    const quiz = await QuizAttempt.findById(quizId);
+    const quizStats = getQuizResultStats(quiz);
+    data.push(quizStats);
   }
 
+  res.status(200).json({ data });
+};
 
-
-}
+export const deleteQuiz = async (req, res) => {
+  const { quizId } = req.params;
+  const quiz = await QuizAttempt.deleteOne({ _id: quizId });
+  res.status(200).json({ m: "quiz deleteed" });
+};

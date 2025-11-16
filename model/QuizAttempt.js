@@ -5,9 +5,10 @@ const quizAttemptSchema = new Schema({
     type: [
       {
         questionId: { type: Schema.Types.ObjectId, required: true },
-        userChoosenOPtion: { type: String },
+        userChosenOption: { type: String },
         isCorrect: { type: Boolean },
         isAttempt: { type: Boolean, required: true },
+        questionNumber: { type: Number, required: true },
       },
     ],
     required: true,
@@ -70,6 +71,14 @@ const quizAttemptSchema = new Schema({
     type: Number,
     required: true,
   },
+  correctAnswerCount: {
+    type: Number,
+    required: true,
+  },
+  wrongAnswerCount: {
+    type: Number,
+    required: true,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -78,35 +87,17 @@ const quizAttemptSchema = new Schema({
     type: Number,
     default: 0,
   },
+  status: {
+    type: String,
+    enum: ["Completed", "Quiz in progress", "Not started"],
+    default: "Not Started",
+  },
+  isdeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const QuizAttempt = model("QuizAttempt", quizAttemptSchema);
 
 export default QuizAttempt;
-
-// const quiz = {
-//   allQuestions: [
-//     { questionId: 123, userChoosenOPtion: "virat", isCorrect: true },
-//     { questionId: 128, userChoosenOPtion: "pop", isCorrect: false },
-//     { questionId: 985, userChoosenOPtion: "" },
-//   ],
-//   totalQuestions: 10,
-//   currentScore: 45,
-//   totalScore: 10 * 50,
-//   isQuizCompleted: false,
-//   userId: 788,
-//   timeForEachQuestion: 0,
-// };
-
-// const userSchema = new Schema({
-//   username: {
-//     type: String,
-//     required: true,
-//     validate: {
-//       validator: function (value) {
-//         return /^[a-zA-Z0-9_]+$/.test(value);   // only letters, numbers, underscores
-//       },
-//       message: "Username is invalid",
-//     },
-//   },
-// });

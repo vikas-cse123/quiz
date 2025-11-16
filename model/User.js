@@ -41,23 +41,27 @@ const userSchema = new Schema(
       required: [true, "Password is required."],
       minlength: [6, "Password must be at least 6 characters long."],
     },
-    currentPlayingQuiz: {
+    currentPlayingQuizId: {
       type: Schema.Types.Mixed,
       default: null,
-      // validate: {
-      //   validator: function (value) {
-      //     console.log(`${this.currentPlayingQuiz},"**************"`);
-      //     if (
-      //       typeof value === "null" ||
-      //       value instanceof mongoose.Types.ObjectId
-      //     ) {
-      //       return true;
-      //     } else {
-      //       return false;
-      //     }
-      //   },
-      //   message: "Current playing quiz can only be null or objectID",
-      // },
+      validate: {
+        validator: function (value) {
+          console.log(`${this.currentPlayingQuizId},"**************"`);
+          if (
+            typeof value === "null" ||
+            value instanceof mongoose.Types.ObjectId
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        message: "Current playing quiz can only be null or objectID",
+      },
+    },
+    quizHistory: {
+      type: [Schema.Types.ObjectId],
+      default: [],
     },
   },
   { timestamps: true },
