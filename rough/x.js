@@ -1,22 +1,14 @@
-export const logout = (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    });
+import mongoose from "mongoose";
 
-    return res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
-    
-  } catch (err) {
-    console.error("Logout error:", err);
-
-    return res.status(500).json({
-      success: false,
-      message: "Unable to logout. Please try again."
-    });
+const defaultAvatarSchema = new mongoose.Schema({
+  avatar: {
+    type: Buffer,
+    required: true
+  },
+  contentType: {
+    type: String,
+    required: true
   }
-};
+}, { timestamps: true });
+
+export const DefaultAvatar = mongoose.model("DefaultAvatar", defaultAvatarSchema);
