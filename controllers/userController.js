@@ -105,7 +105,7 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid credentials." });
     }
     if(isLogoutOtherDevices){
-      const r1 = await Session.deleteMany({_id:user.id})
+      const r1 = await Session.deleteMany({userId:user.id})
       console.log({r1});
     }
     console.log({user});
