@@ -2,7 +2,7 @@ import OTP from "../model/OTP.js";
 import Session from "../model/Session.js";
 import User from "../model/User.js";
 import { sendEmail } from "../utils/sendEmailService.js";
-import {  readFile } from "fs/promises";
+import { readFile } from "fs/promises";
 
 export const sendOtp = async (req, res) => {
   try {
@@ -25,7 +25,7 @@ export const sendOtp = async (req, res) => {
     await sendEmail(
       email,
       "Your OTP Code for Account Verification",
-      otpTemplateHtml,
+      otpTemplateHtml
     );
 
     const existingOTP = await OTP.findOne({ email });
@@ -90,7 +90,7 @@ export const createAccount = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { password, email } = req.body;
+    const { password, email,isLogoutOtherDevices } = req.body;
     const user = await User.findOne({ email, isDeleted: false });
 
     if (!user) {
@@ -104,58 +104,65 @@ export const login = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid credentials." });
     }
-
-    const existingSession = await Session.findOne({
-      _id: req.cookies.sessionId,
-      userId: user._id,
-    });
-    console.log(existingSession, "existingSession");
-    console.log(existingSession?.id, "existingSession id id");
-    let sessionId;
-    if (existingSession) {
-      existingSession.createdAt = Date.now();
-      await existingSession.save();
-      sessionId = existingSession.id;
-    } else {
-      const session = await Session.create({ userId: user._id });
-      console.log("session-session-session", session);
-      sessionId = session.id;
+    if(isLogoutOtherDevices){
+      const r1 = await Session.deleteMany({_id:user.id})
+      console.log({r1});
     }
-    console.log("sessionId", sessionId);
-    res.cookie("sessionId", sessionId, {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-    });
+    console.log({user});
 
-    return res
+    const allSessions = await Session.find({userId:user._id});
+    console.log("allSessions", allSessions);
+    if (allSessions.length >= 2) {
+      return res.status(200).json({message:"Already 2 devcies are logged in "})
+    } else {
+      const existingSession = await Session.findOne({
+        _id: req.cookies.sessionId,
+        userId: user._id,
+      });
+
+      let sessionId;
+      if (existingSession) {
+        existingSession.createdAt = Date.now();
+        await existingSession.save();
+        sessionId = existingSession.id;
+      } else {
+        const session = await Session.create({ userId: user._id });
+        console.log("session-session-session", session);
+        sessionId = session.id;
+      }
+      console.log("sessionId", sessionId);
+      res.cookie("sessionId", sessionId, {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true,
+      });
+
+      return res
       .status(200)
       .json({ success: true, message: "Login successful." });
+    }
+
+
   } catch (error) {
     console.log(error);
     throw new Error("");
   }
 };
 
-
 export const logout = async (req, res) => {
   try {
-  const user = req.user;
-  const { sessionId } = req.cookies;
-   await Session.deleteOne({ _id: sessionId, userId: user.id });
-  res.clearCookie("sessionId", {
-    httpOnly: true,
-  });
+    const user = req.user;
+    const { sessionId } = req.cookies;
+    await Session.deleteOne({ _id: sessionId, userId: user.id });
+    res.clearCookie("sessionId", {
+      httpOnly: true,
+    });
 
-  return res.status(200).json({
-    success: true,
-    message: "Logged out successfully",
-  });
-
-    
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
   } catch (error) {
-    throw new Error("Unable to logout. Please try again.")
-
-    
+    throw new Error("Unable to logout. Please try again.");
   }
 };
 
