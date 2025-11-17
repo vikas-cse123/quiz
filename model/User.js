@@ -35,14 +35,13 @@ const userSchema = new Schema(
     },
     avatar: {
       data: {
-        type:Buffer,
-        default:null
+        type: Buffer,
+        default: null,
       },
       contentType: {
-        type:String,
-        default:null
-      }
-      
+        type: String,
+        default: null,
+      },
     },
     isDeleted: {
       type: Boolean,

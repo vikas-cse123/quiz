@@ -1,23 +1,22 @@
-router.post(
-  "/avatar/:id",
-  (req, res, next) => {
-    upload.single("avatar")(req, res, (err) => {
-      if (err) {
-        if (err.code === "LIMIT_FILE_SIZE") {
-          return res.status(413).json({
-            success: false,
-            message: "File size exceeds 16MB limit",
-          });
-        }
-
-        return res.status(400).json({
-          success: false,
-          message: err.message,
-        });
-      }
-
-      next();
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
     });
-  },
-  uploadAvatar
-);
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+    
+  } catch (err) {
+    console.error("Logout error:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to logout. Please try again."
+    });
+  }
+};

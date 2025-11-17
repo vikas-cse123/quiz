@@ -11,7 +11,7 @@ export const checkAuth = async (req, res, next) => {
       message: "Access denied. Please log in to continue.",
     });
   }
-  const user = await User.findById(session.userId);
+  const user = await User.findOne({ _id: session.userId, isDeleted: false });
   if (!user) {
     return res.status(404).json({
       success: false,

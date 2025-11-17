@@ -2,7 +2,7 @@ import OTP from "../model/OTP.js";
 import Session from "../model/Session.js";
 import User from "../model/User.js";
 import { sendEmail } from "../utils/sendEmailService.js";
-import { appendFile, readFile, writeFile } from "fs/promises";
+import {  readFile } from "fs/promises";
 
 export const sendOtp = async (req, res) => {
   try {
@@ -136,6 +136,29 @@ export const login = async (req, res) => {
   }
 };
 
+
+export const logout = async (req, res) => {
+  try {
+  const user = req.user;
+  const { sessionId } = req.cookies;
+   await Session.deleteOne({ _id: sessionId, userId: user.id });
+  res.clearCookie("sessionId", {
+    httpOnly: true,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+
+    
+  } catch (error) {
+    throw new Error("Unable to logout. Please try again.")
+
+    
+  }
+};
+
 //vikas-missing-deleting quiz and its other data
 export const deleteUser = async (req, res) => {
   try {
@@ -164,16 +187,14 @@ export const deleteUser = async (req, res) => {
 export const uploadAvatar = async (req, res) => {
   try {
     const user = req.user;
-    console.log("user",user);
-    console.log("req.file",req.file);
+
     if (!req.file) {
       return res.status(400).json({ message: "Avatar is required" });
     }
 
-
     user.avatar = {
       data: req.file.buffer,
-      contentType: req.file.mimetype, 
+      contentType: req.file.mimetype,
     };
     await user.save();
 
@@ -184,17 +205,18 @@ export const uploadAvatar = async (req, res) => {
   }
 };
 
-
-export const getAvatar = async (req,res) => {
+export const getAvatar = async (req, res) => {
   try {
-    console.log("here");
-    const {id} = req.params
-    const user = await User.findById(id)
-    res.end(user.avatar.data)
-
-
-    
+    const user = req.user;
+    if (!user.avatar.data) {
+      return res.status(404).json({
+        success: false,
+        message: "Avatar not found",
+      });
+    }
+    res.set("Content-Type", user.avatar.contentType);
+    res.send(user.avatar.data);
   } catch (error) {
-    
+    throw new Error("Unable to fetch avatar");
   }
-}
+};

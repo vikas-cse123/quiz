@@ -32,3 +32,4 @@ in frontend check if input number field is number otstring .in backend i am acce
 avatar
 
 1. not checking the file size
+2. send default avatar
