@@ -1,19 +1,26 @@
 import OTP from "../model/OTP.js";
 import Session from "../model/Session.js";
 import User from "../model/User.js";
-import { sendEmail } from "../sendEmailService.js";
-import { readFile } from "fs/promises";
+import { sendEmail } from "../utils/sendEmailService.js";
+import { appendFile, readFile, writeFile } from "fs/promises";
 
 export const sendOtp = async (req, res) => {
   try {
-    const { email, fullname } = req.body;
+    const { email, name } = req.body;
+    const existingUser = await User.findOne({ email, isDeleted: false });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Account already exists with this email.",
+      });
+    }
 
-    const otp = Math.floor(Math.random() * 90000) + 10000;
+    const otp = String(Math.floor(Math.random() * 90000) + 10000);
     const otpTemplateHtml = (await readFile("./templates/otp.html", "utf-8"))
-      .replace("{{userName}}", fullname || "")
+      .replaceAll("{{userName}}", name || "")
       .replaceAll("{{appName}}", process.env.APP_NAME)
-      .replace("{{otp}}", otp)
-      .replace("{{year}}", new Date().getFullYear());
+      .replaceAll("{{otp}}", otp)
+      .replaceAll("{{year}}", new Date().getFullYear());
 
     await sendEmail(
       email,
@@ -22,43 +29,30 @@ export const sendOtp = async (req, res) => {
     );
 
     const existingOTP = await OTP.findOne({ email });
-    console.log("existingOTP", existingOTP);
     if (existingOTP) {
       existingOTP.otp = otp;
       existingOTP.createdAt = Date.now();
       await existingOTP.save();
     } else {
-      OTP.create({ otp, email });
+      await OTP.create({ otp, email });
     }
-
     return res.status(201).json({
       success: true,
       message: `OTP sent successfully to ${email}.`,
     });
   } catch (error) {
+    // vikas-validation error
     console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    throw new Error("Failed to send OTP. Please try again later.");
   }
 };
 
 export const createAccount = async (req, res) => {
   try {
-    console.log("req.body", req.body);
-    const { username, email, otp } = req.body;
-    const existingUser = await User.findOne({ username });
-    console.log("existingUser", existingUser);
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message: "This username isn't available. Please try another.",
-      });
-    }
+    const { email, otp } = req.body;
 
-    const existingUserWithThisEmail = await User.findOne({ email });
-    console.log("existingUserWithThisEmail", existingUserWithThisEmail);
-    if (existingUserWithThisEmail) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(409).json({
         success: false,
         message: "Email already registered. Please use another email",
@@ -73,15 +67,16 @@ export const createAccount = async (req, res) => {
       });
     }
 
-    const user = await User.create(req.body);
-    console.log("user", user);
+    await User.create(req.body);
+    await otpObj.deleteOne();
 
     return res.status(201).json({
       success: true,
       message: `Account created successfully`,
     });
   } catch (error) {
-    console.log(error);
+    console.log("aaaa", error);
+    //vikas-left to review
     if (error.name === "ValidationError") {
       const errorData = {};
       for (const key in error.errors) {
@@ -89,38 +84,30 @@ export const createAccount = async (req, res) => {
       }
       return res.status(400).json({ success: false, message: errorData });
     }
-
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    throw new Error();
   }
 };
 
 export const login = async (req, res) => {
-  console.log(req.headers);
-  console.log(req.cookies);
   try {
-    const { password, usernameOrEmail } = req.body;
-    let user;
-    if (usernameOrEmail.includes("@")) {
-      user = await User.findOne({ email: usernameOrEmail });
-    } else {
-      user = await User.findOne({ username: usernameOrEmail });
-    }
+    const { password, email } = req.body;
+    const user = await User.findOne({ email, isDeleted: false });
+
     if (!user) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "Invalid credentials.." });
     }
     const isPasswordCorrect = await user.isPasswordCorrect(password);
     if (!isPasswordCorrect) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "Invalid credentials." });
     }
 
     const existingSession = await Session.findOne({
       _id: req.cookies.sessionId,
+      userId: user._id,
     });
     console.log(existingSession, "existingSession");
     console.log(existingSession?.id, "existingSession id id");
@@ -145,8 +132,69 @@ export const login = async (req, res) => {
       .json({ success: true, message: "Login successful." });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    throw new Error("");
   }
 };
+
+//vikas-missing-deleting quiz and its other data
+export const deleteUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user.isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    await Session.deleteMany({ userId: user._id });
+    await OTP.deleteMany({ email: user.email });
+    user.isDeleted = true;
+    user.deletedAt = new Date();
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+};
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    const user = req.user;
+    console.log("user",user);
+    console.log("req.file",req.file);
+    if (!req.file) {
+      return res.status(400).json({ message: "Avatar is required" });
+    }
+
+
+    user.avatar = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype, 
+    };
+    await user.save();
+
+    res.status(200).json({ message: "Avatar uploaded successfully" });
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+};
+
+
+export const getAvatar = async (req,res) => {
+  try {
+    console.log("here");
+    const {id} = req.params
+    const user = await User.findById(id)
+    res.end(user.avatar.data)
+
+
+    
+  } catch (error) {
+    
+  }
+}

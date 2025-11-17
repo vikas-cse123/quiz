@@ -1,29 +1,14 @@
 import { Schema, model } from "mongoose";
-import { mongoose } from "mongoose";
 import bcrypt from "bcrypt";
 const userSchema = new Schema(
   {
-    fullname: {
+    name: {
       type: String,
-      required: [true, "Full name is required."],
+      required: [true, "Name is required."],
       trim: true,
-      minlength: [3, "Full name must be at least 3 characters long."],
-      maxlength: [30, "Full name cannot exceed 30 characters."],
+      minlength: [3, "Name must be at least 3 characters long."],
+      maxlength: [30, "Name cannot exceed 30 characters."],
     },
-
-    username: {
-      type: String,
-      required: [true, "Username is required."],
-      trim: true,
-      minlength: [3, "Username must be at least 3 characters long."],
-      maxlength: [30, "Username cannot exceed 30 characters."],
-      match: [
-        /^[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores.",
-      ],
-      unique: true, // handled at DB level — we’ll still check manually in backend
-    },
-
     email: {
       type: String,
       required: [true, "Email address is required."],
@@ -33,36 +18,37 @@ const userSchema = new Schema(
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "Please enter a valid email address.",
       ],
-      unique: true, // add this to prevent duplicates
+      unique: true,
     },
 
     password: {
       type: String,
       required: [true, "Password is required."],
-      minlength: [6, "Password must be at least 6 characters long."],
     },
     currentPlayingQuizId: {
-      type: Schema.Types.Mixed,
+      type: Schema.Types.ObjectId,
       default: null,
-      validate: {
-        validator: function (value) {
-          console.log(`${this.currentPlayingQuizId},"**************"`);
-          if (
-            typeof value === "null" ||
-            value instanceof mongoose.Types.ObjectId
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        },
-        message: "Current playing quiz can only be null or objectID",
-      },
     },
     quizHistory: {
       type: [Schema.Types.ObjectId],
       default: [],
     },
+    avatar: {
+      data: {
+        type:Buffer,
+        default:null
+      },
+      contentType: {
+        type:String,
+        default:null
+      }
+      
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: { type: Date },
   },
   { timestamps: true },
 );
@@ -75,5 +61,6 @@ userSchema.pre("save", async function () {
 userSchema.methods.isPasswordCorrect = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
 const User = model("User", userSchema);
 export default User;

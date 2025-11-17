@@ -1,5 +1,5 @@
 #code improvement(now)
-1)use custom global error midlleware
+1)use custom global error midlleware/global error middleware.
 2)API-
 a)an endpoint show number of question in category and difficulty
 3)add router.param for id
@@ -12,3 +12,23 @@ a)an endpoint show number of question in category and difficulty
 #Tech improvement(later)
 1)use zod for data validation in backend
 2)Login with google
+3)signed cookies
+
+app.js
+
+1. No 404 handler
+   Any unknown route returns HTML garbage instead of JSON.
+
+Models
+1)use ref whereeber required
+
+user controller
+1)Delete otp after creatinga account
+2)create - Reactivate the old user instead of creating a new one
+
+otp
+in frontend check if input number field is number otstring .in backend i am accepting otp as number
+
+avatar
+
+1. not checking the file size
