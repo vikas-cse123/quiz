@@ -1,14 +1,15 @@
 #code improvement(now)
-1)use custom global error midlleware/global error middleware.
-2)API-
-a)an endpoint show number of question in category and difficulty
+//User
 3)add router.param for id
+1)use custom global error midlleware/global error middleware.//done
+2)API-
+//Quiz
+a)an endpoint show number of question in category and difficulty
 4)time for quiz -each question or whole quiz
 5)dont send whole quiz once send question one by one
 6)csv and pdf result in quiz result
 7)pagianted quiz history
 8)quiz status complete mark when click on result
-9)validate id req.param
 
 #Tech improvement(later)
 1)use zod for data validation in backend
@@ -16,10 +17,7 @@ a)an endpoint show number of question in category and difficulty
 3)signed cookies
 4)email when login
 
-app.js
 
-1. No 404 handler
-   Any unknown route returns HTML garbage instead of JSON.
 
 Models
 1)use ref whereeber required

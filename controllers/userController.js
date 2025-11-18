@@ -2,10 +2,13 @@ import DefaultAvatar from "../model/DefaultAvatar.js";
 import OTP from "../model/OTP.js";
 import Session from "../model/Session.js";
 import User from "../model/User.js";
-import { sendEmail } from "../utils/sendEmailService.js";
+import { isOtpValid } from "../services/isOtpValid.js";
+import { sendEmail } from "../services/sendEmailService.js";
 import { readFile } from "fs/promises";
 
 const sendOtp = async (res, email, subject, emailContentHtmlPath, name) => {
+  try {
+    
   const otp = String(Math.floor(Math.random() * 90000) + 10000);
   const emailContentHtml = (await readFile(emailContentHtmlPath, "utf-8"))
     .replaceAll("{{userName}}", name || "")
@@ -26,26 +29,32 @@ const sendOtp = async (res, email, subject, emailContentHtmlPath, name) => {
     success: true,
     message: `OTP sent successfully to ${email}.`,
   });
+
+    
+  } catch (error) {
+    throw new Error("Failed to send OTP. Please try again later.")
+
+    
+  }
 };
 
 export const sendOtpForSignUp = async (req, res) => {
   try {
     const { email, name } = req.body;
-    const existingUser = await User.findOne({ email, isDeleted: false });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
         success: false,
         message: "Account already exists with this email.",
       });
     }
-    const otp = await sendOtp(
+     await sendOtp(
       res,
       email,
       "Your OTP Code for Account Verification",
       "./templates/otp.html",
       name,
     );
-    console.log({ otp, me: "sddsaas" });
   } catch (error) {
     // vikas-validation error
     console.log(error);
@@ -53,7 +62,6 @@ export const sendOtpForSignUp = async (req, res) => {
   }
 };
 
-//vikas-use verify otp fn
 export const createAccount = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -66,23 +74,23 @@ export const createAccount = async (req, res) => {
       });
     }
 
-    const otpObj = await OTP.findOne({ email, otp });
-    if (!otpObj) {
+    const isOTPValid = await isOtpValid(email,otp)
+    //vikas-repeating-code
+    if (!isOTPValid) {
       return res.status(400).json({
         success: false,
-        message: "Invalid OTP. Please try again.",
+        message: "Invalid OTP.",
       });
     }
 
     await User.create(req.body);
-    await otpObj.deleteOne();
 
     return res.status(201).json({
       success: true,
       message: `Account created successfully`,
     });
   } catch (error) {
-    console.log("aaaa", error);
+    console.log( error);
     //vikas-left to review
     if (error.name === "ValidationError") {
       const errorData = {};
@@ -277,10 +285,10 @@ export const deleteAvatar = async (req, res) => {
 
 export const defaultAvatar = async (req, res) => {
   try {
-    const {avatar} = await DefaultAvatar.findOne()
-    console.log("-----------",avatar);
+    const { avatar } = await DefaultAvatar.findOne();
+    console.log("-----------", avatar);
     res.set("Content-Type", avatar.contentType);
-    res.send(avatar.data)
+    res.send(avatar.data);
   } catch (error) {}
 };
 
@@ -306,22 +314,11 @@ export const changePassword = async (req, res) => {
   }
 };
 
-const verifyOtp2 = async (email, otp) => {
-  try {
-    const otpObj = await OTP.findOne({ email, otp });
-    if (otpObj) {
-      return true;
-    } else {
-      false;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    const isOTPcorrect = verifyOtp2(email, otp);
+    const isOTPcorrect = isOtpValid(email, otp);
     if (!isOTPcorrect) {
       return res.status(400).json({
         success: false,
@@ -357,7 +354,7 @@ export const sendOtpForForgotPassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
-    const isOTPcorrect = verifyOtp2(email, otp);
+    const isOTPcorrect = isOtpValid(email, otp);
     if (!isOTPcorrect) {
       throw new Error();
     }

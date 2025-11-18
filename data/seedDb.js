@@ -7,21 +7,21 @@ export const seedDb = async () => {
   try {
     //seed default avatar
     const existingDefaultAvatar = await DefaultAvatar.countDocuments();
-    console.log({ existingDefaultAvatar });
     if (existingDefaultAvatar === 0) {
-      const defaultAvatarBinary = await readFile("./public/default-avatar.jpg");
-      console.log(defaultAvatarBinary);
+      const data = await readFile("./public/default-avatar.jpg");
       const contentType = mime.lookup("default-avatar.jpg");
-      console.log( contentType );
-      const avatar = {
-data: defaultAvatarBinary, contentType
-      }
-      await DefaultAvatar.create({avatar,age:90});
+
+      await DefaultAvatar.create({
+        avatar: {
+          data,
+          contentType,
+        },
+      });
     }
+    //seed questions
     const existingQuestionsCount = await Question.countDocuments();
     if (existingQuestionsCount === 0) {
       await Question.insertMany(quizData);
-      console.log("Database seeded");
     }
   } catch (error) {
     console.log(error);

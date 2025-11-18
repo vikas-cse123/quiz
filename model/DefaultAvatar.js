@@ -1,18 +1,16 @@
 import { Schema, model } from "mongoose";
 const defaultAvatarSchema = new Schema(
   {
-    avatar:{
-          data: {
-      type: Buffer,
-    //   required: true,
+    avatar: {
+      data: {
+        type: Buffer,
+        required: true,
+      },
+      contentType: {
+        type: String,
+        required: true,
+      },
     },
-    contentType: {
-      type: String,
-    //   required: true,
-    }
-    }
-   
-  
   },
   { timestamps: true },
 );
