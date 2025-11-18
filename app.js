@@ -11,12 +11,18 @@ await seedDb();
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(cookieParser());
+app.use(cookieParser())
 app.use(express.json());
 
 app.use("/user", userRoutes);
 app.use("/quiz", quizRoutes);
 
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found"
+  });
+});
 app.use((err, req, res, next) => {
   console.log("errrrrr", err);
   return res
