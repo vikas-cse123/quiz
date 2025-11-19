@@ -8,33 +8,27 @@ import { readFile } from "fs/promises";
 
 const sendOtp = async (res, email, subject, emailContentHtmlPath, name) => {
   try {
-    
-  const otp = String(Math.floor(Math.random() * 90000) + 10000);
-  const emailContentHtml = (await readFile(emailContentHtmlPath, "utf-8"))
-    .replaceAll("{{userName}}", name || "")
-    .replaceAll("{{appName}}", process.env.APP_NAME)
-    .replaceAll("{{otp}}", otp)
-    .replaceAll("{{year}}", new Date().getFullYear());
-
-  await sendEmail(email, subject, emailContentHtml);
-  const existingOTP = await OTP.findOne({ email });
-  if (existingOTP) {
-    existingOTP.otp = otp;
-    existingOTP.createdAt = Date.now();
-    await existingOTP.save();
-  } else {
-    await OTP.create({ otp, email });
-  }
-  return res.status(201).json({
-    success: true,
-    message: `OTP sent successfully to ${email}.`,
-  });
-
-    
+    const otp = String(Math.floor(Math.random() * 90000) + 10000);
+    const emailContentHtml = (await readFile(emailContentHtmlPath, "utf-8"))
+      .replaceAll("{{userName}}", name || "")
+      .replaceAll("{{appName}}", process.env.APP_NAME)
+      .replaceAll("{{otp}}", otp)
+      .replaceAll("{{year}}", new Date().getFullYear());
+    await sendEmail(email, subject, emailContentHtml);
+    const existingOTP = await OTP.findOne({ email });
+    if (existingOTP) {
+      existingOTP.otp = otp;
+      existingOTP.createdAt = Date.now();
+      await existingOTP.save();
+    } else {
+      await OTP.create({ otp, email });
+    }
+    return res.status(201).json({
+      success: true,
+      message: `OTP sent successfully to ${email}.`,
+    });
   } catch (error) {
-    throw new Error("Failed to send OTP. Please try again later.")
-
-    
+    throw new Error("Failed to send OTP. Please try again later.");
   }
 };
 
@@ -48,7 +42,7 @@ export const sendOtpForSignUp = async (req, res) => {
         message: "Account already exists with this email.",
       });
     }
-     await sendOtp(
+    await sendOtp(
       res,
       email,
       "Your OTP Code for Account Verification",
@@ -74,7 +68,7 @@ export const createAccount = async (req, res) => {
       });
     }
 
-    const isOTPValid = await isOtpValid(email,otp)
+    const isOTPValid = await isOtpValid(email, otp);
     //vikas-repeating-code
     if (!isOTPValid) {
       return res.status(400).json({
@@ -90,7 +84,7 @@ export const createAccount = async (req, res) => {
       message: `Account created successfully`,
     });
   } catch (error) {
-    console.log( error);
+    console.log(error);
     //vikas-left to review
     if (error.name === "ValidationError") {
       const errorData = {};
@@ -123,19 +117,22 @@ export const login = async (req, res) => {
       const r1 = await Session.deleteMany({ userId: user.id });
       console.log({ r1 });
     }
-    console.log({ user });
 
     const allSessions = await Session.find({ userId: user._id });
     console.log("allSessions", allSessions);
     if (allSessions.length >= 2) {
       return res
-        .status(200)
+        .status(403)
         .json({ message: "Already 2 devcies are logged in " });
     } else {
-      const existingSession = await Session.findOne({
-        _id: req.cookies.sessionId,
-        userId: user._id,
-      });
+      let existingSession;
+      if (req.cookies.sessionId) {
+        existingSession = await Session.findOne({
+          _id: req.cookies.sessionId,
+          userId: user._id,
+        });
+      }
+
       console.log({ existingSession });
 
       let sessionId;
@@ -224,6 +221,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+
 export const uploadAvatar = async (req, res) => {
   try {
     const user = req.user;
@@ -286,7 +284,6 @@ export const deleteAvatar = async (req, res) => {
 export const defaultAvatar = async (req, res) => {
   try {
     const { avatar } = await DefaultAvatar.findOne();
-    console.log("-----------", avatar);
     res.set("Content-Type", avatar.contentType);
     res.send(avatar.data);
   } catch (error) {}
@@ -314,11 +311,11 @@ export const changePassword = async (req, res) => {
   }
 };
 
-
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    const isOTPcorrect = isOtpValid(email, otp);
+    const isOTPcorrect = await isOtpValid(email, otp,false);
+    console.log({isOTPcorrect});
     if (!isOTPcorrect) {
       return res.status(400).json({
         success: false,
@@ -336,9 +333,11 @@ export const verifyOtp = async (req, res) => {
 };
 
 export const sendOtpForForgotPassword = async (req, res) => {
+  try {
+    
   const { email } = req.body;
-  const user = await User.findOne({ email });
-  console.log("user", user);
+  const user = await User.findOne({ email ,isDeleted:false});
+  // console.log("user", user);
   if (!user) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
@@ -349,14 +348,21 @@ export const sendOtpForForgotPassword = async (req, res) => {
     `Your OTP to reset your ${process.env.APP_NAME} password`,
     "./templates/forgotPasswordOTP.html",
   );
+
+    
+  } catch (error) {
+    throw new Error("Failed to send OTP. Please try again later.");
+
+    
+  }
 };
 
-export const forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res,next) => {
   try {
     const { email, otp, newPassword } = req.body;
-    const isOTPcorrect = isOtpValid(email, otp);
+    const isOTPcorrect = await isOtpValid(email, otp);
     if (!isOTPcorrect) {
-      throw new Error();
+      next(new Error())
     }
     const user = await User.findOne({ email, isDeleted: false });
     if (!user) {

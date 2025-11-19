@@ -1,7 +1,5 @@
 #code improvement(now)
 //User
-3)add router.param for id
-1)use custom global error midlleware/global error middleware.//done
 2)API-
 //Quiz
 a)an endpoint show number of question in category and difficulty
@@ -20,25 +18,18 @@ a)an endpoint show number of question in category and difficulty
 
 
 Models
-1)use ref whereeber required
-
-user controller
-1)Delete otp after creatinga account
-2)create - Reactivate the old user instead of creating a new one
-3)logot route - should i put check auth or not
+1)use ref when  required in models
 
 
-profile route
-1)sending all user data i should send selected fields
-otp
-in frontend check if input number field is number otstring .in backend i am accepting otp as number
+#user routes
+3)add router.param for id
 
-avatar
-
-1. not checking the file size
-2. send default avatar
+##profile route
+1)sending all user data. i should send selected fields
+##upload avatar
+1)limit the file size
 
 
 
 
-<!-- "$2b$12$92rkSkC4m3C6QeLjUqi8EeKbtuWfl.tdpBnPB626MkJtfD/T/RaE2" -->
+

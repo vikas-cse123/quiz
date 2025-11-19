@@ -4,6 +4,7 @@ import { connectDb } from "./config/db.js";
 import { seedDb } from "./data/seedDb.js";
 import userRoutes from "./routes/userRoutes.js";
 import quizRoutes from "./routes/quizRoutes.js";
+import { checkAuth } from "./middlewares/checkAuth.js";
 
 await connectDb();
 await seedDb();
@@ -15,7 +16,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/user", userRoutes);
-app.use("/quiz", quizRoutes);
+app.use("/quiz",checkAuth, quizRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
