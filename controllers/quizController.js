@@ -55,36 +55,40 @@ const getOptions = (correctAnswer, incorrectAnswers) => {
 };
 export const createQuiz = async (req, res) => {
   const user = req.user;
+  console.log({user});
 
-  let { category, totalQuestions, difficulty, type,minutes,seconds } =
-   
+  let { category, totalQuestions, difficulty, type, minutes, seconds } =
     req.body;
-    console.log({ category, totalQuestions, difficulty, type,minutes,seconds });
-    const quizTimeInSeconds = minutes*60+seconds*60
-    totalQuestions = Number(totalQuestions)
+  console.log({ category, totalQuestions, difficulty, type, minutes, seconds });
+  const quizTimeInSeconds = minutes * 60 + seconds * 60;
+  totalQuestions = Number(totalQuestions);
   //vikas-gpt ask if it good way to lowercase or not
   // difficulty = difficulty.toLowerCase();
   // type = type.toLowerCase();
-  let quiz = (
-    await Question.aggregate([
-      {
-        $match: {
-          category: {
-            $in:
-              category ===  "Any Category" ? ["General Knowledge", "Sports"] : [category],
-          },
-          difficulty: {
-            $in:
-              difficulty === "Any Difficulty" ? ["easy", "medium", "hard"] : [difficulty],
-          },
-          type: { $in: type ==='Any Type' ? ["multiple", "boolean"] : [type] },
+  let quiz = await Question.aggregate([
+    {
+      $match: {
+        category: {
+          $in:
+            category === "Any Category"
+              ? ["General Knowledge", "Sports"]
+              : [category],
         },
+        difficulty: {
+          $in:
+            difficulty === "Any Difficulty"
+              ? ["easy", "medium", "hard"]
+              : [difficulty],
+        },
+        type: { $in: type === "Any Type" ? ["multiple", "boolean"] : [type] },
       },
-      {
-        $sample: { size: totalQuestions },
-      },
-    ])
-  )
+    },
+    {
+      $sample: { size: totalQuestions },
+    },
+  ]);
+  console.log("---------------------------");
+  console.log({quiz});
 
   //vikas-gpt:is it good way to take value in variable likr this
   let totalScore;
@@ -108,8 +112,8 @@ export const createQuiz = async (req, res) => {
   }
 
   const quizAttempt = await QuizAttempt.create({
-    allQuestions: quiz.map(({ id }, i) => ({
-      questionId: id,
+    allQuestions: quiz.map(({ _id }, i) => ({
+      questionId: _id,
       questionNumber: i + 1,
     })),
     totalQuestions,
@@ -120,7 +124,7 @@ export const createQuiz = async (req, res) => {
     mediumQuestions: difficultyStats.medium,
     hardQuestions: difficultyStats.hard,
     userId: user.id,
-  quizTimeInSeconds
+    quizTimeInSeconds,
   });
 
   // if (user.currentPlayingQuizId) {
@@ -131,7 +135,7 @@ export const createQuiz = async (req, res) => {
   //   }
   // }
 
-  // user.currentPlayingQuizId = quizAttempt._id;
+  user.currentPlayingQuizId = quizAttempt._id;
 
   await user.save();
 
@@ -139,29 +143,32 @@ export const createQuiz = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Quiz generated successfully.",
-    data: {quizId:quizAttempt.id},
+    data: { quizId: quizAttempt.id },
   });
 };
 
+//current playing quiz start taken from req.user.currentplayingquizid
 export const startQuiz = async (req, res) => {
   try {
     const user = req.user;
-    const quiz = req.quiz;
+    // const quiz = req.quiz;
+    const quizId = user.currentPlayingQuizId;
+    const quiz = await QuizAttempt.findById(quizId);
     if (quiz.isEnd) {
       return res
         .status(200)
         .json({ success: false, message: "Quiz already completed" });
     }
-    if (user.currentPlayingQuizId) {
-      const currentPlayingQuiz = await QuizAttempt.findById(
-        user.currentPlayingQuizId,
-      );
-      if (currentPlayingQuiz) {
-        user.quizHistory.push(user.currentPlayingQuizId);
-      }
-    }
+    // if (user.currentPlayingQuizId) {
+    //   const currentPlayingQuiz = await QuizAttempt.findById(
+    //     user.currentPlayingQuizId,
+    //   );
+    //   if (currentPlayingQuiz) {
+    //     user.quizHistory.push(user.currentPlayingQuizId);
+    //   }
+    // }
 
-    user.currentPlayingQuizId = quiz.id;
+    // user.currentPlayingQuizId = quiz.id;
 
     if (quiz.status === "Not Started") {
       quiz.status = "Quiz in progress";
@@ -172,6 +179,12 @@ export const startQuiz = async (req, res) => {
     }
     await quiz.save();
     await user.save();
+    return res
+      .status(200)
+      .json({
+        success: true,
+        data: { quizId: quiz.id, totalQuestions: quiz.allQuestions.length },
+      });
   } catch (error) {
     console.log(error);
   }
@@ -235,6 +248,8 @@ export const getQuestion = async (req, res) => {
       .status(404)
       .json({ success: false, message: "Question not found" });
   }
+
+let correctAnswer = question.correctAnswer
   question = [question].map(
     ({
       type,
@@ -245,8 +260,6 @@ export const getQuestion = async (req, res) => {
       incorrectAnswers,
       _id,
     }) => {
-
-
       return {
         type,
         difficulty,
@@ -255,10 +268,36 @@ export const getQuestion = async (req, res) => {
         options: getOptions(correctAnswer, incorrectAnswers),
         id: _id,
       };
-    },
-  )[0]
+    }
+  )[0];
   // return res.status(200).json({ success: true, data: question });
-    return res.status(200).json({success:true,data:{...question,questionNumber:questionRecord.questionNumber,isAttempt:questionRecord.isAttempt}});
+
+    if (questionRecord.isAttempt) {
+    return res
+      .status(200)
+      .json({
+        success: true,
+        data: {
+          ...question,
+          questionNumber: questionRecord.questionNumber,
+          isAttempt: questionRecord.isAttempt,
+          userChosenOption: questionRecord.userChosenOption,
+          correctAnswer,
+          isCorrect:questionRecord.isCorrect
+        },
+      });
+  }
+
+  return res
+    .status(200)
+    .json({
+      success: true,
+      data: {
+        ...question,
+        questionNumber: questionRecord.questionNumber,
+        isAttempt: questionRecord.isAttempt,
+      },
+    });
 };
 
 export const checkAnswer = async (req, res) => {
@@ -299,6 +338,7 @@ export const checkAnswer = async (req, res) => {
   questionRecord.isAttempt = true;
   questionRecord.userChosenOption = userSelectedOption;
   if (userSelectedOption === question.correctAnswer) {
+    questionRecord.isCorrect = true
     quiz.correctAnswerCount = quiz.correctAnswerCount + 1;
     quiz.currentScore =
       quiz.currentScore + eachDiffcultyScore[question.difficulty];
@@ -307,14 +347,20 @@ export const checkAnswer = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Correct answer.",
+      isCorrect:true
     });
   } else {
+    questionRecord.isCorrect = false
+
     quiz.wrongAnswerCount = quiz.wrongAnswerCount + 1;
     await quiz.save();
 
     return res.status(200).json({
       success: true,
       message: "Incorrect answer.",
+      isCorrect:false,
+      correctAnswer:question.correctAnswer
+
     });
   }
 };
@@ -377,16 +423,12 @@ export const deleteQuiz = async (req, res) => {
   res.status(200).json({ m: "quiz deleteed" });
 };
 
-
-export const getAllCategories = async(req,res) => {
+export const getAllCategories = async (req, res) => {
   try {
-    const result = await Question.distinct("category")
+    const result = await Question.distinct("category");
     console.log(result);
-    res.status(200).json({success:true,data:[...result,"Any Category"]})
-
+    res.status(200).json({ success: true, data: [...result, "Any Category"] });
   } catch (error) {
-    console.log("-----",error);
-
-    
+    console.log("-----", error);
   }
-}
+};

@@ -1,3 +1,5 @@
+import QuizAttempt from "../model/QuizAttempt.js";
+
 export const checkQuizExist = async (req, res, next) => {
   const quizId = req.params.quizId || req.body.quizId;
   try {
@@ -11,7 +13,8 @@ export const checkQuizExist = async (req, res, next) => {
         .json({ success: false, message: "Quiz not found" });
     }
 
-    if (quiz.id.toString() !== req.user._id.toString()) {
+    console.log(quiz.id);
+    if (quiz.id.toString() !== req.user.currentPlayingQuizId.toString()) {
       return res.status(200).json({
         success: false,
         message: "current playing quiz id and given id are different",
