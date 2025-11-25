@@ -1,4 +1,4 @@
-import { getQuizResultStats } from "../helpers/getQuizResultStats.js";
+import { getQuizResultStats } from "../utils/getQuizResultStats.js";
 import Question from "../model/Question.js";
 import QuizAttempt from "../model/QuizAttempt.js";
 
@@ -54,8 +54,9 @@ const getOptions = (correctAnswer, incorrectAnswers) => {
   return randomizedOptions;
 };
 export const createQuiz = async (req, res) => {
-  //getOptions,getQuizDiffcultyAndTypeStats
-  let { category, totalQuestions, difficulty, type, timeForEachQuestionInSec } =
+  const user = req.user;
+
+  let { category, totalQuestions, difficulty, type, quizTimeInSeconds } =
     req.body;
   //vikas-gpt ask if it good way to lowercase or not
   difficulty = difficulty.toLowerCase();
@@ -65,7 +66,8 @@ export const createQuiz = async (req, res) => {
       {
         $match: {
           category: {
-            $in: category === "mix" ? ["General Knowledge"] : [category],
+            $in:
+              category === "mix" ? ["General Knowledge", "Sports"] : [category],
           },
           difficulty: {
             $in:
@@ -123,43 +125,32 @@ export const createQuiz = async (req, res) => {
   const quizAttempt = await QuizAttempt.create({
     allQuestions: quiz.map(({ id }, i) => ({
       questionId: id,
-      isAttempt: false,
       questionNumber: i + 1,
     })),
     totalQuestions,
     multipleQuestionCount: questionTypeCount.multiple,
     booleanQuestionCount: questionTypeCount.boolean,
-    currentScore: 0,
     totalScore,
     easyQuestions: difficultyStats.easy,
     mediumQuestions: difficultyStats.medium,
     hardQuestions: difficultyStats.hard,
-    userId: req.user.id,
-    timeForEachQuestionInSec,
-    correctAnswerCount: 0,
-    wrongAnswerCount: 0,
+    userId: user.id,
+    quizTimeInSecondsec,
   });
 
-  //save  quizAttempt  id in user data
-  const user = req.user;
-  if (user.currentPlayingQuizId) {
-    const quiz = await QuizAttempt.findById(user.currentPlayingQuizId);
-    if (!quiz) {
-      // user.currentPlayingQuizId = quizAttempt._id;
-    } else {
-      user.quizHistory.push(user.currentPlayingQuizId);
-
-      // user.currentPlayingQuizId = quizAttempt._id;
-    }
-  }
-  // else {
-
-  //   user.currentPlayingQuizId = quizAttempt._id;
+  // if (user.currentPlayingQuizId) {
+  //   const quiz = await QuizAttempt.findById(user.currentPlayingQuizId);
+  //   if (quiz) {
+  //     user.quizHistory.push(user.currentPlayingQuizId);
+  //   } else {
+  //   }
   // }
-  user.currentPlayingQuizId = quizAttempt._id;
+
+  // user.currentPlayingQuizId = quizAttempt._id;
 
   await user.save();
 
+  //vikas-change-the-reponse
   return res.status(200).json({
     success: true,
     message: "Quiz generated successfully.",
@@ -167,98 +158,175 @@ export const createQuiz = async (req, res) => {
   });
 };
 
+export const startQuiz = async (req, res) => {
+  try {
+    const user = req.user;
+    const quiz = req.quiz;
+    if (quiz.isEnd) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Quiz already completed" });
+    }
+    if (user.currentPlayingQuizId) {
+      const currentPlayingQuiz = await QuizAttempt.findById(
+        user.currentPlayingQuizId,
+      );
+      if (currentPlayingQuiz) {
+        user.quizHistory.push(user.currentPlayingQuizId);
+      }
+    }
+
+    user.currentPlayingQuizId = quiz.id;
+
+    if (quiz.status === "Not Started") {
+      quiz.status = "Quiz in progress";
+    } else if (quiz.status === "Completed") {
+      return res
+        .status(200)
+        .json({ success: false, message: "Quiz already Completed" });
+    }
+    await quiz.save();
+    await user.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const endQuiz = async (req, res) => {
+  try {
+    const quiz = req.quiz;
+    const user = req.user;
+
+    if (quiz.status === "Quiz in progress") {
+      quiz.status = "Completed";
+    } else if (quiz.status === "Not Started") {
+      return res
+        .status(200)
+        .json({ success: false, message: "Quiz not started" });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: "Quiz already Completed" });
+    }
+    quiz.isEnd = true;
+    user.currentPlayingQuizId = null;
+    await user.save();
+    await quiz.save();
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+};
+
 export const getQuestion = async (req, res) => {
-  const questionNumber = Number(req.params.questionId);
-  const { quizId } = req.body;
-  const quiz = await QuizAttempt.findById(quizId);
-  console.log(questionNumber);
-  if (questionNumber - 1 >= quiz.totalQuestions) {
+  const questionNumber = Number(req.params.questionNumber);
+  // const { quizId } = req.body;
+  // const quiz = await QuizAttempt.findOne({ userId: req.user.id, _id: quizId });
+  // if (!quiz) {
+  //   return res.status(404).json({ success: false, message: "Quiz not found" });
+  // }
+  const quiz = req.quiz;
+  if (quiz.isEnd) {
     return res
-      .status(400)
-      .json({ msg: `quiz has only ${quiz.totalQuestions} questions` });
+      .status(200)
+      .json({ success: false, message: "Quiz already completed" });
+  }
+
+  if (questionNumber > quiz.totalQuestions) {
+    return res.status(400).json({
+      success: false,
+      message: `Question number exceeds total questions`,
+    });
   }
 
   const questionRecord = quiz.allQuestions[questionNumber - 1];
-  if (questionRecord.isAttempt) {
-    return res.status(400).json({ msg: "ye pehle hi atempt ho chuka hai" });
-  }
+  // if (questionRecord.isAttempt) {
+  //   return res.status(400).json({ msg: "ye pehle hi atempt ho chuka hai" });
+  // }
 
   const question = await Question.findById(questionRecord.questionId);
-  return res.status(200).json(question);
+  if (!question) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Question not found" });
+  }
+  return res.status(200).json({ success: true, data: question });
 };
 
 export const checkAnswer = async (req, res) => {
-  const { questionId, userSelectedOption, quizId } = req.body;
+  const quiz = req.quiz;
+  const questionNumber = Number(req.params.questionNumber);
+  const { userSelectedOption } = req.body;
+  // const quiz = await QuizAttempt.findOne({ userId: req.user.id, _id: quizId });
+  // if (!quiz) {
+  //   return res.status(404).json({ success: false, message: "Quiz not found" });
+  // }
 
-  if (req.user.currentPlayingQuizId.toString() !== quizId) {
-    return res.status(200).json({ m: "1111 :quiz id mismatched" });
-  }
-
-  const quiz = await QuizAttempt.findById(quizId);
-  if (!quiz) {
-    return res.status(500).json({ m: "22 : quiz not found " });
-  }
-
-  const question = await Question.findById(questionId);
-  if (!question) {
-    return res.status(404).json({ m: "question not found :333" });
-  }
-  console.log("quizzzz", quiz);
-
-  quiz.status === "Quiz in progress";
-  const questionRecord = quiz.allQuestions.find(
-    (question) => question.questionId.toString() === questionId,
-  );
-  console.log("questionRecord", questionRecord);
-
-  if (questionRecord.isAttempt) {
+  if (quiz.isEnd) {
     return res
       .status(200)
-      .json({ message: "ye question attempt ho chuka hai" });
+      .json({ success: false, message: "Quiz already completed" });
   }
 
+  if (questionNumber > quiz.totalQuestions) {
+    return res.status(400).json({
+      success: false,
+      message: `Question number exceeds total questions`,
+    });
+  }
+  const questionRecord = quiz.allQuestions[questionNumber - 1];
+  const question = await Question.findById(questionRecord.questionId);
+  if (!question) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Question not found" });
+  }
+
+  if (questionRecord.isAttempt) {
+    return res.status(409).json({
+      success: false,
+      message: "This question has already been attempted.",
+    });
+  }
+  questionRecord.isAttempt = true;
+  questionRecord.userChosenOption = userSelectedOption;
   if (userSelectedOption === question.correctAnswer) {
-    questionRecord.isAttempt = true;
-    questionRecord.userChosenOption = userSelectedOption;
     quiz.correctAnswerCount = quiz.correctAnswerCount + 1;
     quiz.currentScore =
       quiz.currentScore + eachDiffcultyScore[question.difficulty];
-
-    await quiz.save();
-    console.log("questionRecord", questionRecord);
-
-    return res
-      .status(200)
-      .json({ success: true, correct: true, message: "Correct answer." });
-  } else {
-    questionRecord.isAttempt = true;
-    questionRecord.userChosenOption = userSelectedOption;
-    question.wrongAnswerCount = question.wrongAnswerCount + 1;
-
     await quiz.save();
 
-    console.log("question------***", questionRecord);
     return res.status(200).json({
-      success: false,
-      correct: false,
-      correctAnswer: question.correctAnswer,
+      success: true,
+      message: "Correct answer.",
+    });
+  } else {
+    quiz.wrongAnswerCount = quiz.wrongAnswerCount + 1;
+    await quiz.save();
+
+    return res.status(200).json({
+      success: true,
       message: "Incorrect answer.",
     });
   }
 };
 
 export const quizResult = async (req, res) => {
-  const { quizId } = req.body;
-  if (req.user.currentPlayingQuizId.toString() !== quizId) {
-    return res.status(200).json({ msg: "diff quiz" });
+  // const { quizId } = req.params;
+  const quiz = req.quiz;
+  if (!quiz.isEnd) {
+    return res
+      .status(200)
+      .json({ success: false, message: "quiz not completed" });
   }
-  //vikas-left . i should also check that quiz must also have user id
-  const quiz = await QuizAttempt.findById(quizId);
 
+  // const quiz = await QuizAttempt.findOne({ userId: req.user.id, _id: quizId });
+  // if (!quiz) {
+  //   return res.status(404).json({ success: false, message: "Quiz not found" });
+  // }
   const qna = [];
-  for (let i = 0; i < quiz.allQuestions.length; i++) {
+  for (let i = 0; i < quiz.totalQuestions; i++) {
     const questionRecord = quiz.allQuestions[i];
-    // console.log("questionRecord",questionRecord);
     const question = await Question.findById(questionRecord.questionId);
 
     qna.push({
@@ -294,7 +362,9 @@ export const getQuizHistory = async (req, res) => {
 };
 
 export const deleteQuiz = async (req, res) => {
-  const { quizId } = req.params;
-  const quiz = await QuizAttempt.deleteOne({ _id: quizId });
+  // const { quizId } = req.params;
+  const quiz = req.quiz;
+
+  const quiz1 = await QuizAttempt.deleteOne({ _id: quiz.id });
   res.status(200).json({ m: "quiz deleteed" });
 };

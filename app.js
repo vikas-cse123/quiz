@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDb } from "./config/db.js";
 import { seedDb } from "./data/seedDb.js";
@@ -12,11 +13,16 @@ await seedDb();
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(
+  cors({
+    origin: "http://192.168.1.6:5173",
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 
 app.use("/user", userRoutes);
-app.use("/quiz",checkAuth, quizRoutes);
+app.use("/quiz", checkAuth, quizRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

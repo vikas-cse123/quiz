@@ -221,7 +221,6 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-
 export const uploadAvatar = async (req, res) => {
   try {
     const user = req.user;
@@ -314,8 +313,8 @@ export const changePassword = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    const isOTPcorrect = await isOtpValid(email, otp,false);
-    console.log({isOTPcorrect});
+    const isOTPcorrect = await isOtpValid(email, otp, false);
+    console.log({ isOTPcorrect });
     if (!isOTPcorrect) {
       return res.status(400).json({
         success: false,
@@ -334,35 +333,32 @@ export const verifyOtp = async (req, res) => {
 
 export const sendOtpForForgotPassword = async (req, res) => {
   try {
-    
-  const { email } = req.body;
-  const user = await User.findOne({ email ,isDeleted:false});
-  // console.log("user", user);
-  if (!user) {
-    return res.status(404).json({ success: false, message: "User not found" });
-  }
+    const { email } = req.body;
+    const user = await User.findOne({ email, isDeleted: false });
+    // console.log("user", user);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
-  await sendOtp(
-    res,
-    email,
-    `Your OTP to reset your ${process.env.APP_NAME} password`,
-    "./templates/forgotPasswordOTP.html",
-  );
-
-    
+    await sendOtp(
+      res,
+      email,
+      `Your OTP to reset your ${process.env.APP_NAME} password`,
+      "./templates/forgotPasswordOTP.html",
+    );
   } catch (error) {
     throw new Error("Failed to send OTP. Please try again later.");
-
-    
   }
 };
 
-export const forgotPassword = async (req, res,next) => {
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email, otp, newPassword } = req.body;
     const isOTPcorrect = await isOtpValid(email, otp);
     if (!isOTPcorrect) {
-      next(new Error())
+      next(new Error());
     }
     const user = await User.findOne({ email, isDeleted: false });
     if (!user) {

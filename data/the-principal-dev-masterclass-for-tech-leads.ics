@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//YourApp//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:principal-developer-online-5-2022
+DTSTAMP:20251120T075748Z
+DTSTART;VALUE=DATE:20251127
+DTEND;VALUE=DATE:20251129
+SUMMARY:The Principal Dev – Masterclass for Tech Leads
+DESCRIPTION:The Principal Dev – Masterclass for Tech Leads is happening on November 27\, 2025\, Online. More information: https://dev.events/conferences/principal-developer-online-5-2022
+LOCATION:Online
+URL:https://dev.events/conferences/principal-developer-online-5-2022
+END:VEVENT
+END:VCALENDAR

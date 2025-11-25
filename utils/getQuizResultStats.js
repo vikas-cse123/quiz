@@ -18,7 +18,7 @@ export const getQuizResultStats = (quiz) => {
   const skipQuestonCount =
     totalQuestions - correctAnswerCount - wrongAnswerCount;
   const attemptQuestionCount = totalQuestions - skipQuestonCount;
-  const { remarks, grade } = calculateGrade(quiz.currentScore, quiz.totalScore);
+  const { remarks, grade } = calculateGrade(currentScore, totalScore);
 
   const stats = {
     totalQuestions,

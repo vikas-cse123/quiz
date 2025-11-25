@@ -8,6 +8,7 @@ a)an endpoint show number of question in category and difficulty
 6)csv and pdf result in quiz result
 7)pagianted quiz history
 8)quiz status complete mark when click on result
+9)create a reusable fn for finding quiz
 
 #Tech improvement(later)
 1)use zod for data validation in backend

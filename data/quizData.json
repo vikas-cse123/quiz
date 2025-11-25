@@ -1978,5 +1978,429 @@
     "question": "Spoon theory is a theory, utilizing &quot;Spoons&quot; as a metaphor for energy they can use in a day.",
     "correctAnswer": "True",
     "incorrectAnswers": ["False"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In bowling, what is the term used for getting three consecutive strikes?",
+    "correctAnswer": "Turkey",
+    "incorrectAnswers": ["Flamingo", "Birdie", "Eagle"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "How many points did LeBron James score in his first NBA game?",
+    "correctAnswer": "25",
+    "incorrectAnswers": ["19", "69", "41"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which year did Jenson Button won his first ever Formula One World Drivers&#039; Championship?",
+    "correctAnswer": "2009",
+    "incorrectAnswers": ["2010", "2007", "2006"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which team won 2014 FIFA World Cup in Brazil?",
+    "correctAnswer": "Germany",
+    "incorrectAnswers": ["Argentina", "Brazil", "Netherlands"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What is the name of the &quot;tool&quot; used to hit the white ball in snooker or billiards?",
+    "correctAnswer": "Cue",
+    "incorrectAnswers": ["Racquet", "Bat", "Mallet"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What was the final score of the Germany vs. Brazil 2014 FIFA World Cup match?",
+    "correctAnswer": "7 - 1",
+    "incorrectAnswers": ["0 - 1", "3 - 4", "16 - 0"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which team won the 2015-16 English Premier League?",
+    "correctAnswer": "Leicester City",
+    "incorrectAnswers": ["Liverpool", "Cheslea", "Manchester United"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which player holds the NHL record of 2,857 points?",
+    "correctAnswer": "Wayne Gretzky",
+    "incorrectAnswers": ["Mario Lemieux ", "Sidney Crosby", "Gordie Howe"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the UEFA Champions League in 2016?",
+    "correctAnswer": "Real Madrid C.F.",
+    "incorrectAnswers": [
+      "FC Bayern Munich",
+      "Atletico Madrid",
+      "Manchester City F.C."
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which NFL team plays for New England?",
+    "correctAnswer": "Patriots",
+    "incorrectAnswers": ["Chiefs", "Dolphins", "49ers"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In the 2014 FIFA World Cup, what was the final score in the match Brazil - Germany?",
+    "correctAnswer": "1-7",
+    "incorrectAnswers": ["1-5", "1-6", "2-6"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which driver has been the Formula 1 world champion for a record 7 times?",
+    "correctAnswer": "Michael Schumacher",
+    "incorrectAnswers": ["Ayrton Senna", "Fernando Alonso", "Jim Clark"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "The Los Angeles Dodgers were originally from what U.S. city?",
+    "correctAnswer": "Brooklyn",
+    "incorrectAnswers": ["Las Vegas", "Boston", "Seattle"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What year did the New Orleans Saints win the Super Bowl?",
+    "correctAnswer": "2010",
+    "incorrectAnswers": ["2008", "2009", "2011"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which country hosted the 2022 FIFA World Cup?",
+    "correctAnswer": "Qatar",
+    "incorrectAnswers": ["USA", "Japan", "Switzerland"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the 2017 Formula One World Drivers&#039; Championship?",
+    "correctAnswer": "Lewis Hamilton",
+    "incorrectAnswers": ["Sebastian Vettel", "Nico Rosberg", "Max Verstappen"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which team has won the most Stanley Cups in the NHL?",
+    "correctAnswer": "Montreal Canadians",
+    "incorrectAnswers": [
+      "Chicago Blackhawks",
+      "Toronto Maple Leafs",
+      "Detroit Red Wings"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "&quot;Stadium of Light&quot; is the home stadium for which soccer team?",
+    "correctAnswer": "Sunderland FC",
+    "incorrectAnswers": [
+      "Barcelona FC",
+      "Paris Saints-Germain",
+      "Manchester United"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the 2015 Formula 1 World Championship?",
+    "correctAnswer": "Lewis Hamilton",
+    "incorrectAnswers": ["Nico Rosberg", "Sebastian Vettel", "Jenson Button"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who is often called &quot;the Maestro&quot; in the men&#039;s tennis circuit?",
+    "correctAnswer": "Roger Federer",
+    "incorrectAnswers": ["Bill Tilden", "Boris Becker", "Pete Sampras"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What is the name of Manchester United&#039;s home stadium?",
+    "correctAnswer": "Old Trafford",
+    "incorrectAnswers": [
+      "Anfield",
+      "City of Manchester Stadium",
+      "St James Park"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which wrestler won the 2019 Men&rsquo;s Royal Rumble?",
+    "correctAnswer": "Seth Rollins",
+    "incorrectAnswers": ["Braun Strowman", "AJ Styles", "Andrade"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which city did the former NHL team &quot;The Nordiques&quot; originiate from?",
+    "correctAnswer": "Quebec City",
+    "incorrectAnswers": ["Houston", "Montreal", "New York"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which country won the 2018 FIFA World Cup hosted in Russia?",
+    "correctAnswer": "France",
+    "incorrectAnswers": ["Croatia", "Belgium", "England"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the premier league title in the 2015-2016 season following a fairy tale run?",
+    "correctAnswer": "Leicester City",
+    "incorrectAnswers": ["Tottenham Hotspur", "Watford", "Stoke City"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which boxer was banned for taking a bite out of Evander Holyfield&#039;s ear in 1997?",
+    "correctAnswer": "Mike Tyson",
+    "incorrectAnswers": ["Roy Jones Jr.", "Evander Holyfield", "Lennox Lewis"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In baseball, how many fouls are an out?",
+    "correctAnswer": "0",
+    "incorrectAnswers": ["5", "3", "2"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "The UEFA Champions League is an annual club football competition featuring clubs from which continent?",
+    "correctAnswer": "Europe",
+    "incorrectAnswers": ["South America", "Africa", "Asia"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In what sport is a &quot;shuttlecock&quot; used?",
+    "correctAnswer": "Badminton",
+    "incorrectAnswers": ["Table Tennis", "Rugby", "Cricket"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What team did England beat to win in the 1966 World Cup final?",
+    "correctAnswer": "West Germany",
+    "incorrectAnswers": ["Soviet Union", "Portugal", "Brazil"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What is the most common type of pitch thrown by pitchers in baseball?",
+    "correctAnswer": "Fastball",
+    "incorrectAnswers": ["Slowball", "Screwball", "Palmball"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which two teams played in Super Bowl XLII?",
+    "correctAnswer": "The New York Giants &amp; The New England Patriots",
+    "incorrectAnswers": [
+      "The Green Bay Packers &amp; The Pittsburgh Steelers",
+      "The Philadelphia Eagles &amp; The New England Patriots",
+      "The Seattle Seahawks &amp; The Denver Broncos"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "This Canadian television sportscaster is known for his &quot;Hockey Night in Canada&quot; role, a commentary show during hockey games.",
+    "correctAnswer": "Don Cherry",
+    "incorrectAnswers": ["Don McKellar", "Don Taylor ", "Donald Sutherland"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the UEFA Champions League in 2017?",
+    "correctAnswer": "Real Madrid C.F.",
+    "incorrectAnswers": ["Atletico Madrid", "AS Monaco FC", "Juventus F.C."]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who did Steven Gerrard win the Champions League with?",
+    "correctAnswer": "Liverpool",
+    "incorrectAnswers": ["Real Madrid", "Chelsea", "Man City"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which country hosted the 2020 Summer Olympics?",
+    "correctAnswer": "Japan",
+    "incorrectAnswers": ["China", "Australia", "Germany"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In golf, what name is given to a hole score of two under par?",
+    "correctAnswer": "Eagle",
+    "incorrectAnswers": ["Birdie", "Bogey", "Albatross"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What sport features the terms love, deuce, match and volley?",
+    "correctAnswer": "Tennis",
+    "incorrectAnswers": ["Cricket", "Basketball", "Curling"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Who won the 2016 Formula 1 World Driver&#039;s Championship?",
+    "correctAnswer": "Nico Rosberg",
+    "incorrectAnswers": ["Lewis Hamilton", "Max Verstappen", "Kimi Raikkonen"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "In Baseball, how many times does the ball have to be pitched outside of the strike zone before the batter is walked?",
+    "correctAnswer": "4",
+    "incorrectAnswers": ["1", "2", "3"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "How many soccer players should be on the field at the same time?",
+    "correctAnswer": "22",
+    "incorrectAnswers": ["20", "24", "26"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which English football club has the nickname &#039;The Foxes&#039;?",
+    "correctAnswer": "Leicester City",
+    "incorrectAnswers": [
+      "Northampton Town",
+      "Bradford City",
+      "West Bromwich Albion"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "The Rio 2016 Summer Olympics held it&#039;s closing ceremony on what date?",
+    "correctAnswer": "August 21",
+    "incorrectAnswers": ["August 23", "August 19", "August 17"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What was the year of estabilishment of the Bari Italian Football Club?",
+    "correctAnswer": "1908",
+    "incorrectAnswers": ["1945", "2014", "1895"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "How many players are there in an association football\/soccer team?",
+    "correctAnswer": "11",
+    "incorrectAnswers": ["10", "9", "8"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which African American is in part responsible for integrating  Major League baseball?",
+    "correctAnswer": "Jackie Robinson",
+    "incorrectAnswers": ["Curt Flood", "Roy Campanella", "Satchell Paige"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which country hosted the 2018 FIFA World Cup?",
+    "correctAnswer": "Russia",
+    "incorrectAnswers": ["Germany", "United States", "Saudi Arabia"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "What team won the 2016 MLS Cup?",
+    "correctAnswer": "Seattle Sounders",
+    "incorrectAnswers": ["Colorado Rapids", "Toronto FC", "Montreal Impact"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "When was the first official international game played?",
+    "correctAnswer": "1872",
+    "incorrectAnswers": ["1880", "1863", "1865"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "easy",
+    "category": "Sports",
+    "question": "Which of the following sports is not part of the triathlon?",
+    "correctAnswer": "Horse-Riding",
+    "incorrectAnswers": ["Cycling", "Swimming", "Running"]
   }
 ]

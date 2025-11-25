@@ -7,7 +7,7 @@ const quizAttemptSchema = new Schema({
         questionId: { type: Schema.Types.ObjectId, required: true },
         userChosenOption: { type: String },
         isCorrect: { type: Boolean },
-        isAttempt: { type: Boolean, required: true },
+        isAttempt: { type: Boolean, required: true, default: false },
         questionNumber: { type: Number, required: true },
       },
     ],
@@ -39,7 +39,6 @@ const quizAttemptSchema = new Schema({
   easyQuestions: {
     type: Number,
     required: true,
-    // default:0,
     validate: {
       validator: function (value) {
         if (
@@ -65,6 +64,7 @@ const quizAttemptSchema = new Schema({
 
   currentScore: {
     type: Number,
+    default: 0,
     required: true,
   },
   totalScore: {
@@ -74,10 +74,12 @@ const quizAttemptSchema = new Schema({
   correctAnswerCount: {
     type: Number,
     required: true,
+    default: 0,
   },
   wrongAnswerCount: {
     type: Number,
     required: true,
+    default: 0,
   },
   userId: {
     type: Schema.Types.ObjectId,
@@ -89,10 +91,14 @@ const quizAttemptSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["Completed", "Quiz in progress", "Not started"],
+    enum: ["Completed", "Quiz in progress", "Not Started"],
     default: "Not Started",
   },
   isdeleted: {
+    type: Boolean,
+    default: false,
+  },
+  isEnd: {
     type: Boolean,
     default: false,
   },
