@@ -85,7 +85,7 @@ const quizAttemptSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  timeForEachQuestionInSec: {
+ quizTimeInSecondsc: {
     type: Number,
     default: 0,
   },

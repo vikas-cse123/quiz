@@ -149,6 +149,7 @@ export const login = async (req, res) => {
       res.cookie("sessionId", sessionId, {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
+        sameSite:"lax"
       });
 
       return res

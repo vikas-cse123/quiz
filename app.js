@@ -13,11 +13,7 @@ await seedDb();
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(
-  cors({
-    origin: "http://192.168.1.6:5173",
-  }),
-);
+app.use(cors({origin:"http://192.168.1.17:5173",credentials:true}));
 app.use(cookieParser());
 app.use(express.json());
 

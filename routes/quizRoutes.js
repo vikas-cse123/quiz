@@ -8,6 +8,7 @@ import {
   getQuizHistory,
   quizResult,
   startQuiz,
+  getAllCategories,
 } from "../controllers/quizController.js";
 import { checkQuizExist } from "../utils/checkQuizExists.js";
 const router = express.Router();
@@ -20,4 +21,6 @@ router.get("/result/:quizId", checkQuizExist, quizResult);
 router.post("/question/:questionNumber", checkQuizExist, getQuestion);
 router.get("/history", getQuizHistory);
 router.delete("/:quizId", checkQuizExist, deleteQuiz);
+
+router.get("/categories",checkAuth,getAllCategories)
 export default router;

@@ -56,57 +56,42 @@ const getOptions = (correctAnswer, incorrectAnswers) => {
 export const createQuiz = async (req, res) => {
   const user = req.user;
 
-  let { category, totalQuestions, difficulty, type, quizTimeInSeconds } =
+  let { category, totalQuestions, difficulty, type,minutes,seconds } =
+   
     req.body;
+    console.log({ category, totalQuestions, difficulty, type,minutes,seconds });
+    const quizTimeInSeconds = minutes*60+seconds*60
+    totalQuestions = Number(totalQuestions)
   //vikas-gpt ask if it good way to lowercase or not
-  difficulty = difficulty.toLowerCase();
-  type = type.toLowerCase();
+  // difficulty = difficulty.toLowerCase();
+  // type = type.toLowerCase();
   let quiz = (
     await Question.aggregate([
       {
         $match: {
           category: {
             $in:
-              category === "mix" ? ["General Knowledge", "Sports"] : [category],
+              category ===  "Any Category" ? ["General Knowledge", "Sports"] : [category],
           },
           difficulty: {
             $in:
-              difficulty === "mix" ? ["easy", "medium", "hard"] : [difficulty],
+              difficulty === "Any Difficulty" ? ["easy", "medium", "hard"] : [difficulty],
           },
-          type: { $in: type === "mix" ? ["multiple", "boolean"] : [type] },
+          type: { $in: type ==='Any Type' ? ["multiple", "boolean"] : [type] },
         },
       },
       {
         $sample: { size: totalQuestions },
       },
     ])
-  ).map(
-    ({
-      type,
-      difficulty,
-      category,
-      question,
-      correctAnswer,
-      incorrectAnswers,
-      _id,
-    }) => {
-      return {
-        type,
-        difficulty,
-        category,
-        question,
-        options: getOptions(correctAnswer, incorrectAnswers),
-        id: _id,
-      };
-    },
-  );
+  )
 
   //vikas-gpt:is it good way to take value in variable likr this
   let totalScore;
   let difficultyStats;
   let questionTypeCount;
 
-  if (difficulty === "mix") {
+  if (difficulty === "Any Difficulty") {
     const stats = getQuizDiffcultyAndTypeStats(quiz);
     difficultyStats = stats.difficultyCount;
     questionTypeCount = stats.questionTypeCount;
@@ -135,7 +120,7 @@ export const createQuiz = async (req, res) => {
     mediumQuestions: difficultyStats.medium,
     hardQuestions: difficultyStats.hard,
     userId: user.id,
-    quizTimeInSecondsec,
+  quizTimeInSeconds
   });
 
   // if (user.currentPlayingQuizId) {
@@ -154,7 +139,7 @@ export const createQuiz = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Quiz generated successfully.",
-    data: quiz,
+    data: {quizId:quizAttempt.id},
   });
 };
 
@@ -244,13 +229,36 @@ export const getQuestion = async (req, res) => {
   //   return res.status(400).json({ msg: "ye pehle hi atempt ho chuka hai" });
   // }
 
-  const question = await Question.findById(questionRecord.questionId);
+  let question = await Question.findById(questionRecord.questionId);
   if (!question) {
     return res
       .status(404)
       .json({ success: false, message: "Question not found" });
   }
-  return res.status(200).json({ success: true, data: question });
+  question = [question].map(
+    ({
+      type,
+      difficulty,
+      category,
+      question,
+      correctAnswer,
+      incorrectAnswers,
+      _id,
+    }) => {
+
+
+      return {
+        type,
+        difficulty,
+        category,
+        question,
+        options: getOptions(correctAnswer, incorrectAnswers),
+        id: _id,
+      };
+    },
+  )[0]
+  // return res.status(200).json({ success: true, data: question });
+    return res.status(200).json({success:true,data:{...question,questionNumber:questionRecord.questionNumber,isAttempt:questionRecord.isAttempt}});
 };
 
 export const checkAnswer = async (req, res) => {
@@ -368,3 +376,17 @@ export const deleteQuiz = async (req, res) => {
   const quiz1 = await QuizAttempt.deleteOne({ _id: quiz.id });
   res.status(200).json({ m: "quiz deleteed" });
 };
+
+
+export const getAllCategories = async(req,res) => {
+  try {
+    const result = await Question.distinct("category")
+    console.log(result);
+    res.status(200).json({success:true,data:[...result,"Any Category"]})
+
+  } catch (error) {
+    console.log("-----",error);
+
+    
+  }
+}
