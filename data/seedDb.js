@@ -2,7 +2,7 @@ import mime from "mime-types";
 import { readFile } from "fs/promises";
 import DefaultAvatar from "../model/DefaultAvatar.js";
 import Question from "../model/Question.js";
-import quizData from "./quizData.json" with { type: "json" };
+import quizData from "./new.json" with { type: "json" };
 export const seedDb = async () => {
   try {
     //seed default avatar

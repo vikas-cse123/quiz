@@ -18,7 +18,11 @@ const questionSchema = new Schema(
     },
     incorrectAnswers: {
       type: [String],
-      required: true,
+      // required: true,
+    },
+    options:{
+      type:[String],
+      required:true
     },
     category: {
       type: String,

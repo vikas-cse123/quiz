@@ -39,20 +39,20 @@ const getQuizDiffcultyAndTypeStats = (quiz) => {
   return stats;
 };
 
-const getOptions = (correctAnswer, incorrectAnswers) => {
-  const allOptions = [correctAnswer, ...incorrectAnswers];
-  const randomizedOptions = [];
-  const usedIndexes = [];
-  while (randomizedOptions.length !== allOptions.length) {
-    const randomIndex = Math.floor(Math.random() * allOptions.length);
-    if (!usedIndexes.includes(randomIndex)) {
-      randomizedOptions.push(allOptions[randomIndex]);
-      usedIndexes.push(randomIndex);
-    }
-  }
+// const getOptions = (correctAnswer, incorrectAnswers) => {
+//   const allOptions = [correctAnswer, ...incorrectAnswers];
+//   const randomizedOptions = [];
+//   const usedIndexes = [];
+//   while (randomizedOptions.length !== allOptions.length) {
+//     const randomIndex = Math.floor(Math.random() * allOptions.length);
+//     if (!usedIndexes.includes(randomIndex)) {
+//       randomizedOptions.push(allOptions[randomIndex]);
+//       usedIndexes.push(randomIndex);
+//     }
+//   }
 
-  return randomizedOptions;
-};
+//   return randomizedOptions;
+// };
 export const createQuiz = async (req, res) => {
   const user = req.user;
   console.log({user});
@@ -154,6 +154,12 @@ export const startQuiz = async (req, res) => {
     // const quiz = req.quiz;
     const quizId = user.currentPlayingQuizId;
     const quiz = await QuizAttempt.findById(quizId);
+    //vikas : if no quiz found
+    if(!quiz){
+            return res
+        .status(200)
+        .json({ success: false, message: "Quiz not found" });
+    }
     if (quiz.isEnd) {
       return res
         .status(200)
@@ -258,6 +264,7 @@ let correctAnswer = question.correctAnswer
       question,
       correctAnswer,
       incorrectAnswers,
+      options,
       _id,
     }) => {
       return {
@@ -265,8 +272,9 @@ let correctAnswer = question.correctAnswer
         difficulty,
         category,
         question,
-        options: getOptions(correctAnswer, incorrectAnswers),
+        // options: getOptions(correctAnswer, incorrectAnswers),
         id: _id,
+        options
       };
     }
   )[0];
@@ -284,6 +292,7 @@ let correctAnswer = question.correctAnswer
           userChosenOption: questionRecord.userChosenOption,
           correctAnswer,
           isCorrect:questionRecord.isCorrect
+          
         },
       });
   }
