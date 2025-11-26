@@ -153,17 +153,19 @@ export const startQuiz = async (req, res) => {
     const user = req.user;
     // const quiz = req.quiz;
     const quizId = user.currentPlayingQuizId;
+    console.log({quizId});
     const quiz = await QuizAttempt.findById(quizId);
+    console.log({quiz});
     //vikas : if no quiz found
     if (!quiz) {
       return res
         .status(200)
-        .json({ success: false, message: "Quiz not found" });
+        .json({ success: false, message: "Quiz not found..." });
     }
     if (quiz.isEnd) {
       return res
         .status(200)
-        .json({ success: false, message: "Quiz already completed" });
+        .json({ success: false, message: "Quiz already completed.." });
     }
     // if (user.currentPlayingQuizId) {
     //   const currentPlayingQuiz = await QuizAttempt.findById(
@@ -211,7 +213,7 @@ export const endQuiz = async (req, res) => {
         .json({ success: false, message: "Quiz already Completed" });
     }
     quiz.isEnd = true;
-    user.currentPlayingQuizId = null;
+    // user.currentPlayingQuizId = null;
     await user.save();
     await quiz.save();
   } catch (error) {
@@ -278,6 +280,7 @@ export const getQuestion = async (req, res) => {
   )[0];
   // return res.status(200).json({ success: true, data: question });
 
+  const {currentScore,totalScore} = quiz
   if (questionRecord.isAttempt) {
     return res.status(200).json({
       success: true,
@@ -288,6 +291,8 @@ export const getQuestion = async (req, res) => {
         userChosenOption: questionRecord.userChosenOption,
         correctAnswer,
         isCorrect: questionRecord.isCorrect,
+        currentScore,
+        totalScore
       },
     });
   }
@@ -298,6 +303,8 @@ export const getQuestion = async (req, res) => {
       ...question,
       questionNumber: questionRecord.questionNumber,
       isAttempt: questionRecord.isAttempt,
+              currentScore,
+        totalScore
     },
   });
 };
@@ -399,6 +406,7 @@ export const quizResult = async (req, res) => {
   const result = {
     stats: getQuizResultStats(quiz),
     qna,
+    success:true
   };
   return res.status(200).json(result);
 };
