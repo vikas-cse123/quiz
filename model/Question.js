@@ -20,9 +20,9 @@ const questionSchema = new Schema(
       type: [String],
       // required: true,
     },
-    options:{
-      type:[String],
-      required:true
+    options: {
+      type: [String],
+      required: true,
     },
     category: {
       type: String,

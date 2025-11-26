@@ -22,5 +22,5 @@ router.post("/question/:questionNumber", checkQuizExist, getQuestion);
 router.get("/history", getQuizHistory);
 router.delete("/:quizId", checkQuizExist, deleteQuiz);
 
-router.get("/categories",getAllCategories)
+router.get("/categories", getAllCategories);
 export default router;

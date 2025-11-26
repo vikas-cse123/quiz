@@ -55,11 +55,11 @@ const getQuizDiffcultyAndTypeStats = (quiz) => {
 // };
 export const createQuiz = async (req, res) => {
   const user = req.user;
-  console.log({user});
+  // console.log({user});
 
   let { category, totalQuestions, difficulty, type, minutes, seconds } =
     req.body;
-  console.log({ category, totalQuestions, difficulty, type, minutes, seconds });
+  // console.log({ category, totalQuestions, difficulty, type, minutes, seconds });
   const quizTimeInSeconds = minutes * 60 + seconds * 60;
   totalQuestions = Number(totalQuestions);
   //vikas-gpt ask if it good way to lowercase or not
@@ -87,8 +87,8 @@ export const createQuiz = async (req, res) => {
       $sample: { size: totalQuestions },
     },
   ]);
-  console.log("---------------------------");
-  console.log({quiz});
+  // console.log("---------------------------");
+  // console.log({quiz});
 
   //vikas-gpt:is it good way to take value in variable likr this
   let totalScore;
@@ -155,8 +155,8 @@ export const startQuiz = async (req, res) => {
     const quizId = user.currentPlayingQuizId;
     const quiz = await QuizAttempt.findById(quizId);
     //vikas : if no quiz found
-    if(!quiz){
-            return res
+    if (!quiz) {
+      return res
         .status(200)
         .json({ success: false, message: "Quiz not found" });
     }
@@ -185,12 +185,10 @@ export const startQuiz = async (req, res) => {
     }
     await quiz.save();
     await user.save();
-    return res
-      .status(200)
-      .json({
-        success: true,
-        data: { quizId: quiz.id, totalQuestions: quiz.allQuestions.length },
-      });
+    return res.status(200).json({
+      success: true,
+      data: { quizId: quiz.id, totalQuestions: quiz.allQuestions.length },
+    });
   } catch (error) {
     console.log(error);
   }
@@ -255,7 +253,7 @@ export const getQuestion = async (req, res) => {
       .json({ success: false, message: "Question not found" });
   }
 
-let correctAnswer = question.correctAnswer
+  let correctAnswer = question.correctAnswer;
   question = [question].map(
     ({
       type,
@@ -274,39 +272,34 @@ let correctAnswer = question.correctAnswer
         question,
         // options: getOptions(correctAnswer, incorrectAnswers),
         id: _id,
-        options
+        options,
       };
-    }
+    },
   )[0];
   // return res.status(200).json({ success: true, data: question });
 
-    if (questionRecord.isAttempt) {
-    return res
-      .status(200)
-      .json({
-        success: true,
-        data: {
-          ...question,
-          questionNumber: questionRecord.questionNumber,
-          isAttempt: questionRecord.isAttempt,
-          userChosenOption: questionRecord.userChosenOption,
-          correctAnswer,
-          isCorrect:questionRecord.isCorrect
-          
-        },
-      });
-  }
-
-  return res
-    .status(200)
-    .json({
+  if (questionRecord.isAttempt) {
+    return res.status(200).json({
       success: true,
       data: {
         ...question,
         questionNumber: questionRecord.questionNumber,
         isAttempt: questionRecord.isAttempt,
+        userChosenOption: questionRecord.userChosenOption,
+        correctAnswer,
+        isCorrect: questionRecord.isCorrect,
       },
     });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      ...question,
+      questionNumber: questionRecord.questionNumber,
+      isAttempt: questionRecord.isAttempt,
+    },
+  });
 };
 
 export const checkAnswer = async (req, res) => {
@@ -347,7 +340,7 @@ export const checkAnswer = async (req, res) => {
   questionRecord.isAttempt = true;
   questionRecord.userChosenOption = userSelectedOption;
   if (userSelectedOption === question.correctAnswer) {
-    questionRecord.isCorrect = true
+    questionRecord.isCorrect = true;
     quiz.correctAnswerCount = quiz.correctAnswerCount + 1;
     quiz.currentScore =
       quiz.currentScore + eachDiffcultyScore[question.difficulty];
@@ -356,10 +349,10 @@ export const checkAnswer = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Correct answer.",
-      isCorrect:true
+      isCorrect: true,
     });
   } else {
-    questionRecord.isCorrect = false
+    questionRecord.isCorrect = false;
 
     quiz.wrongAnswerCount = quiz.wrongAnswerCount + 1;
     await quiz.save();
@@ -367,9 +360,8 @@ export const checkAnswer = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Incorrect answer.",
-      isCorrect:false,
-      correctAnswer:question.correctAnswer
-
+      isCorrect: false,
+      correctAnswer: question.correctAnswer,
     });
   }
 };
@@ -435,7 +427,7 @@ export const deleteQuiz = async (req, res) => {
 export const getAllCategories = async (req, res) => {
   try {
     const result = await Question.distinct("category");
-    console.log(result);
+    // console.log(result);
     res.status(200).json({ success: true, data: [...result, "Any Category"] });
   } catch (error) {
     console.log("-----", error);
